@@ -47,7 +47,7 @@ xlim([0,24]);
 
 legend('4dpa Lateral','4dpa Medial','8dpa Lateral','8dpa Medial');
 
-%% Supp Fig 1c
+%% Supp Fig 1d
 % load analysis_mat_threshold.mat from "Supp Fig 1" folder
 t_bins = [];
 for numfish = unique([analysis_mat.fish])
@@ -124,7 +124,7 @@ for numfish = unique([analysis_mat.fish])
     end
 end
 
-%% Supp. Fig. 1D
+%% Supp. Fig. 1E
 % load "analysis_mat_threshold_8h.mat" from folder "SuppFig1"
 
 %step 1
@@ -347,7 +347,7 @@ ylim([0,1])
 % title('detrend by A(\phi)f(u)')
 config_plot(f)
 
-%% Supp. Fig. 1E
+%% Supp. Fig. 1F
 
 % load "analysis_mat_threshold_8h.mat" from folder "SuppFig1"
 
@@ -612,7 +612,7 @@ legend([a,b,c,d], legend_name,...
 
 
 
-%% Supp. Fig. 1G
+%% Supp. Fig. 1H
 % Plot GEM (500um tip) v. ERK (500um Tip) color map Greens
 
 %load "ERKtip" and "GemPlusTip" from "SuppFig1" folder
