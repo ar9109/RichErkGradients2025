@@ -439,7 +439,7 @@ set(fit_plot_small,'linewidth',2,'color',[1 0.5 0.5]);
 
 %scale plot
 xlabel('Fraction Regenerated');
-ylabel('Lambda (um) / Length Regenerated (um)');
+ylabel('Fraction of Regenerate Occupied by Proliferative Zone');
 xlim([0 1.2]);
 ylim([0 1.2]);
 legend('off');
