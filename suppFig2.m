@@ -1,4 +1,4 @@
-%% Supp. Fig. 3B & C
+%% Supp. Fig. 2B & C
 
 %load "analysis_mat_ERKthresh10.mat" from "SuppFig2" Folder
 
@@ -179,7 +179,7 @@ foKTR = fitoptions('Method','LinearLeastSquares',...
         end
     end 
 
-%% Supp. Fig. 3D
+%% Supp. Fig. 2D
 
 %load "analysis_mat_WTdataSet.mat" from "SuppFig2" folder
 
@@ -264,7 +264,7 @@ for fish = 1:55
     end
 end
 
-%% Supp. Fig. 3E
+%% Supp. Fig. 2E
 % Average ERK by time color by Lamp
 
 %load "analysis_mat_WTdataSet.mat" from "SuppFig2" folder
@@ -383,3 +383,192 @@ g.Label.String = 'Length Amputated (um)';
 ylim([0,0.5]);
 %%%ylim([0.6,1.4])
 %xlim([0,1.4])
+
+%% Supp. Fig 2F & G - run next several blocks
+
+%load data from "31Oct22_LongfinTimecourse.xlsx" from "SuppFig2" folder
+%(see below)
+
+%% Set up the Import Options and import the data (supp. 2f&g cont.)
+opts = spreadsheetImportOptions("NumVariables", 45);
+
+% Specify sheet and range
+opts.Sheet = "Sheet1";
+opts.DataRange = "A2:AS73";
+
+% Specify column names and types
+opts.VariableNames = ["fish", "ray", "pre", "post", "AmountAmp", "VarName6", "VarName7", "dpa", "growth1dpa", "VarName10", "dpa_1", "growth2dpa", "VarName13", "dpa_2", "growth4dpa", "VarName16", "dpa_3", "growth7dpa", "VarName19", "dpa_4", "growth15dpa", "VarName22", "dpa_5", "growth21dpa", "VarName25", "dpa_6", "growth28dpa", "VarName28", "dpa_7", "growth35dpa", "VarName31", "dpa_8", "growth42dpa", "VarName34", "dpa_9", "growth49dpa", "VarName37", "dpa_10", "growth56dpa", "VarName40", "dpa_11", "growth64dpa", "VarName43", "dpa_12", "growth70dpa"];
+opts.VariableTypes = ["double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double"];
+
+% Import the data
+growthData = readtable("/Users/ashleyrich/Documents/submissionCode/SuppFig2/31Oct22_LongfinTimecourse.xlsx", opts, "UseExcel", false);
+
+%% Convert to output type (supp. 2f & g cont.)
+growthData = table2array(growthData);
+
+%% Clear temporary variables (supp. 2f&g cont.)
+clear opts
+
+%% set up data matrix from imported data (supp. 2f&g cont.)
+selectData = growthData(:,[1,2,5,9,12,15,18,21,24,27,30,33,36,39, 42, 45]);
+
+selectDataAdjust = selectData(:,4:16)./selectData(:,3);
+
+LampMeasurements = selectData(:,3).*(96000/158);
+
+selectData = horzcat(selectData(:,1:2),selectDataAdjust);
+
+timePoints = [1,2,4,7,15,21,28,35,42,49,56, 64, 70];
+
+LampMeasurementsWT = LampMeasurements(1:36,:);
+
+
+%% collect fish & ray values from WT (supp. 2f&g cont.)
+
+fishCollectWT = [];
+rayCollectWT = [];
+
+for i = 1:36;
+    fishHere = selectData(i,1);
+    fishCollectWT = vertcat(fishCollectWT,fishHere);
+    rayHere = selectData(i,2);
+    rayCollectWT = vertcat(rayCollectWT,rayHere);
+end
+
+uniqueFishWT = unique(fishCollectWT);
+uniqueRayWT = unique(rayCollectWT);
+
+
+%% collect values from WT data (sup. 2f&g cont.)
+
+
+LampFinalWT = [];
+phiFinalWT = [];
+LampCollectWT = [];
+phiCollectWT = [];
+groupNameCol = [];
+rayNumCol = [];
+
+for fishNum = 1:size(uniqueFishWT,1)
+    fishNow = uniqueFishWT(fishNum);
+    for rayNum = 1:size(uniqueRayWT,1)
+        rayNow = uniqueRayWT(rayNum);
+        
+
+            for i = 1:36
+                if selectData(i,1) == fishNow & selectData(i,2) == rayNow
+                LampHere = LampMeasurements(i);
+                phiHere = selectData(i,15);
+                LregHere = LampHere.*phiHere;
+                rayNumHere = rayNow;
+                if rayNow <5 || rayNow > 10
+                    groupNameHere = 1;
+                elseif rayNow > 4 && rayNow < 10
+                    groupNameHere = 2;
+                end
+            
+                LampCollectWT = vertcat(LampCollectWT,LampHere);
+                phiCollectWT = vertcat(phiCollectWT,phiHere);
+                groupNameCol = vertcat(groupNameCol,groupNameHere);
+                rayNumCol = vertcat(rayNumCol,rayNumHere);
+
+                else 
+                    continue
+                end
+            end
+            
+%             if ~isempty(LampCollectWT)
+%                 LampFinalWT = vertcat(LampFinalWT,LampCollectWT(size(LampCollectWT,1)));
+%                 phiFinalWT = vertcat(phiFinalWT,phiCollectWT(size(phiCollectWT,1)));
+%             else
+%                 continue
+%             end
+    end
+end
+
+
+
+%% Plot - only WT - box Plot 5 Sept 25 (supp. 2f cont.)
+
+%subsetData
+lateralIdx = groupNameCol == 1;
+medialIdx = groupNameCol == 2;
+
+phiLatWT = phiCollectWT(lateralIdx);
+lampLatWT = LampCollectWT(lateralIdx);
+phiMedWT = phiCollectWT(medialIdx);
+lampMedWT = LampCollectWT(medialIdx);
+
+latX = zeros(1,size(phiLatWT,1));
+latX(latX==0)=2;
+
+medX = zeros(1,size(phiMedWT,1));
+medX(medX==0)=1;
+
+%latX2 = linspace(0.8,1.2,size(phiLatWT,1));
+latX2 = 1.8 + (2.2-1.8) * rand(1, size(phiLatWT,1));
+medX2 = 0.8 + (1.2-0.8) * rand(1, size(phiMedWT,1));
+
+
+close all;
+f = figure;
+
+b = boxchart(latX,phiLatWT);
+b.BoxFaceColor = [0 0 0 0.5]; hold on;
+plot(latX2,phiLatWT,'.','markersize',20,'Color','k');
+
+c = boxchart(medX,phiMedWT,'MarkerStyle','none');
+c.BoxFaceColor = [0 0 0 0.5]; hold on;
+plot(medX2,phiMedWT,'.','markersize',20,'Color','k');
+
+yline(1,'--');
+%set(gco,'--','linewidth',2);
+
+%xlabel('Length Amputated (\mum)');
+ylabel('Fraction Regenerated');
+
+xticks([1 2])
+xticklabels({'Medial Rays','Lateral Rays'})
+
+ylim([0.5 1.5]);
+
+config_plot(f);
+
+meanLat = nanmean(phiLatWT);
+stdLat = nanstd(phiLatWT);
+semLat = stdLat./sqrt(numel(phiLatWT));
+varLat = stdLat^2;
+
+meanMed = nanmean(phiMedWT);
+stdMed = nanstd(phiMedWT);
+semMed = stdMed./sqrt(numel(phiMedWT));
+varMed = stdMed^2;
+
+txt1 = strcat('s^2 = ',num2str(round(varLat,1,"significant")));
+text(1.87,1.15,txt1,'fontsize',16)
+
+txt2 = strcat('s^2 = ',num2str(round(varMed,1,"significant")));
+text(0.87,1.2,txt2,'fontsize',16)
+
+
+%paths.plotFolder = '/Volumes/AshleyData3/31Oct22_LongfinTimecourse/Lamp_v_phi_5Sept25'; 
+% paths.plotFolder = 'I:\31Oct22_LongfinTimecourse\Lamp_v_phi_5Sept25'; 
+% mkdir(paths.plotFolder);
+% saveas(f,[paths.plotFolder,filesep,'Lamp_v_PhiFinal_WTonly_boxPlot_flip.png']);
+
+%% Plot - only WT (sup. 2g cont.)
+
+f = figure;
+
+plot(LampCollectWT,phiCollectWT,'.','MarkerSize',30,'color','k'); hold on;
+
+yline(1,'--');
+
+xlabel('Length Amputated (\mum)');
+ylabel('Fraction Regenerated');
+
+ylim([0 2]);
+xlim([1500,5000]);
+
+config_plot(f);
+
