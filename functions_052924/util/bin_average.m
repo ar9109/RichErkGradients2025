@@ -16,11 +16,17 @@ xData = xData(removeNaN);xData = xData(:);
 yData = yData(removeNaN);yData = yData(:);
 xBins = linspace(min_x,max_x,nbins+1);xBins = xBins(:);
 idxBins=discretize(xData,xBins);
-idxBins = idxBins(~isnan(idxBins));
+
+% drop NaNs
+idxBins2 = idxBins(~isnan(idxBins));
+xData = xData(~isnan(idxBins));
+yData = yData(~isnan(idxBins));
+
+%idxBins = idxBins(~isnan(idxBins));
 xMean = [(xBins(1:end-1)+xBins(2:end))/2];
-yMean = accumarray(idxBins,yData,size(xMean),@nanmean,NaN);
-yStd = accumarray(idxBins,yData,size(xMean),@nanstd,NaN);
-yN = accumarray(idxBins,yData,size(xMean),@(x)sum(~isnan(x)),NaN);
+yMean = accumarray(idxBins2,yData,size(xMean),@nanmean,NaN);
+yStd = accumarray(idxBins2,yData,size(xMean),@nanstd,NaN);
+yN = accumarray(idxBins2,yData,size(xMean),@(x)sum(~isnan(x)),NaN);
 ySEM = yStd./sqrt(yN);
 end
 
