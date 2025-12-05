@@ -92,7 +92,7 @@ function [myScale] = visualizeERKKTR(myScale,paths,opts)
         svList=opts.svList;
         
         % position center and angle
-        centers=myScale.TGMM_equalized_ch2.centers;
+        centers=myScale.TGMM_hypo_eq_ch2.centers;
         x0=round(mean(centers(:,1))); y0=round(mean(centers(:,2)));
    
         % edited 071522
