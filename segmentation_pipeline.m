@@ -2,140 +2,54 @@
 %%%%
 % this pipeline is compatible with MATLAB2021b
 clear;clc;close all;
-addpath(genpath('./functions/'))
+addpath(genpath('./functions_052924/'))
 
 
 %% Initialize
+workspace = 'C:\Users\User\Downloads\DataForReporting'; % only need to change this
 
-dataFolder = 'E:\17Feb23_TCF_NLS_tph1b_ERK30';
+%dataFolder = '/Users/ashleyrich/Documents/NaturePhysReportingCompliance';
+dataFolder = workspace; %Windows
 
 dataFolder = [dataFolder filesep];
 dataFolder_split = split(dataFolder,filesep);
 
-winFolder = 'C:\Users\Ashley\Desktop'; % directory to put data on workstation for TGMM run
+winFolder = [workspace]; % directory to put data on workstation for TGMM run
 winFolder = char(join(dataFolder_split(1:end-2),filesep));
 
 % TGMMtemplateFolder = 'D:\BIO\PhD\ditalia\zebrafish\github\ditalia-zebrafish\data'; % directory for TGMMconfig/bat template
-TGMMtemplateFolder = 'I:\workstation_run\segmentation_package';
-TGMMtemplateFolder = './';
+TGMMtemplateFolder = [workspace '\tgmm_template'];
+%TGMMtemplateFolder = './';
 
 TGMMtemplateFolder = [TGMMtemplateFolder filesep];
 
-TGMMbuildFolder = [winFolder filesep 'TGMM_Supplementary_Software_1_0\build\']; % directory file TGMM software
-TGMMbuildFolder = ['D:\BIO\PhD\ditalia' filesep 'TGMM_Supplementary_Software_1_0\build\'];
-TGMMbuildFolder = ['C:\Users\ditalialab\Desktop\TGMM_Supplementary_Software_1_0\build\'];
 
-readTGMMFolder = ['D:\BIO\PhD\ditalia\zebrafish\github\ditalia-zebrafish\code\readTGMM_XMLoutput\']; % paths for readTGMM code
-readTGMMFolder = ['I:\workstation_run\segmentation_package/readTGMM_XMLoutput/'];
-readTGMMFolder = ['./readTGMM_XMLoutput/'];
+TGMMbuildFolder = [workspace '\TGMM_Supplementary_Software_1_0\build\']; % directory file TGMM software
+
+readTGMMFolder = [workspace '\tgmm_template\readTGMM_XMLoutput']; % paths for readTGMM code
 
 % bckgrd = 10;
 % tau = 8;
 
-ch_of_interest = [1,4];
-ch_ref = [1]; % reference channel for stitching
-ch_nuc = [4];
+ch_of_interest = [1,2,3];
+ch_ref = [2]; % reference channel for stitching
+ch_nuc = [2];
 ch_KTR = [1]; % put [] if no KTR channel
-ch_GEM = []; % put [] if no GEM channel
-ch_BF = [3]; % put [] if no Bright Field channel
+ch_GEM = [3]; % put [] if no GEM channel
+ch_BF = []; % put [] if no Bright Field channel
 osteoblast = 1;
-% pluckTime=datetime('2022-09-23 10:30:00'); %time of scale plucking
-pluckTime=datetime('2023-02-17 10:30:00'); %time of scale plucking
+pluckTime=datetime('2021-06-21 9:00:00'); %time of scale plucking
 
-%% copy file (use this when there's two rays in one movie
-%%
-paths=[];
-% paths.masterFolder='/Volumes/AshleyData2/28Mar22
-% _H2A_ERK_Gem_fins_MEKtitrations/'; %folder where data is stored
-paths.masterFolder=dataFolder; %folder where data is stored
-
-paths.inFolder=  [paths.masterFolder 'raw/']; %input folder
-
-st_dir = [];
-fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-scale=''; 
-hpp='312';
-st_dir=[st_dir;dir([paths.inFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*'])];
-fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-scale=''; 
-hpp='384';
-st_dir=[st_dir;dir([paths.inFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*'])];
-fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-scale=''; 
-hpp='552';
-st_dir=[st_dir;dir([paths.inFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*'])];
-
-for i=1:numel(st_dir)
-    if contains(st_dir(i).name,'_ray2_')
-        no_copy_list = {'fish1_ray2_312hpa','fish2_ray2_312hpa','fish6_ray2_312hpa','fish1_ray2_384hpa',...
-            'fish2_ray2_384pa','fish2_ray2_552hpa'};
-%             regexptranslate('wildcard','fish*_ray6_360hpa*')};
-        if ~any(cell2mat(regexp(st_dir(i).name,no_copy_list)))
-%         if ~ismember(st_dir(i).name,no_copy_list)
-            copyfile([paths.inFolder filesep st_dir(i).name], ...
-                [paths.inFolder filesep strrep(st_dir(i).name,'ray2','ray3')])
-        end
-    end
-    if contains(st_dir(i).name,'_ray6_')
-        no_copy_list = {'fish3_ray6_312hpa'};
-        if ~any(cell2mat(regexp(st_dir(i).name,no_copy_list)))
-%         if ~ismember(st_dir(i).name,no_copy_list)
-            copyfile([paths.inFolder filesep st_dir(i).name], ...
-                [paths.inFolder filesep strrep(st_dir(i).name,'ray6','ray7')])
-        end
-    end
-end
-
-%% renaming file in each subfolders (use this when there's two rays in one movie
-%
-paths=[];
-% paths.masterFolder='/Volumes/AshleyData2/28Mar22
-% _H2A_ERK_Gem_fins_MEKtitrations/'; %folder where data is stored
-paths.masterFolder=dataFolder; %folder where data is stored
-
-paths.inFolder=  [paths.masterFolder 'raw/']; %input folder
-
-% fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-% scale=''; 
-% hpp='';
-% st_dir=dir([paths.inFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*']);
-
-for i=1:numel(st_dir)
-    if contains(st_dir(i).name,["_ray3_"])
-        frt_dir = dir([paths.inFolder filesep st_dir(i).name filesep '**']); %fish ray time
-        for j = 1:numel(frt_dir)
-            if contains(frt_dir(j).name,["_ray2_"])
-                [frt_dir(j).folder filesep frt_dir(j).name]
-                movefile([frt_dir(j).folder filesep frt_dir(j).name], ...
-                    [frt_dir(j).folder filesep strrep(frt_dir(j).name,'ray2','ray3')])
-            end
-        end
-    end
-    if contains(st_dir(i).name,["_ray7_"])
-        frt_dir = dir([paths.inFolder filesep st_dir(i).name filesep '**']); %fish ray time
-        for j = 1:numel(frt_dir)
-            if contains(frt_dir(j).name,["_ray6_"])
-                [frt_dir(j).folder filesep frt_dir(j).name]
-                movefile([frt_dir(j).folder filesep frt_dir(j).name], ...
-                    [frt_dir(j).folder filesep strrep(frt_dir(j).name,'ray6','ray7')])
-            end
-        end
-    end
-end
 
 
 %% Stitching
-% Stitch scales 
-% The regenerating scale is usually image in 4-9 position that require
+% Stitch fins 
+% The regenerating fin is usually image in 4-9 position that require
 % need to be stitched in 3D. This section stitches the positions in a
 % single stack.
 
-% close
-
-
 paths=[];
-% paths.masterFolder='/Volumes/AshleyData2/28Mar22
-% _H2A_ERK_Gem_fins_MEKtitrations/'; %folder where data is stored
+
 paths.masterFolder=dataFolder; %folder where data is stored
 
 paths.inFolder=  [paths.masterFolder 'raw/']; %input folder 
@@ -143,7 +57,7 @@ paths.outFolder= [paths.masterFolder 'stitched/']; %output folder
 paths.objFolder= [paths.masterFolder 'objects/']; %objects folder
 
 opts=[];
-opts.refCh=ch_BF; %reference channel to use for stitching 
+opts.refCh=ch_ref; %reference channel to use for stitching 
 opts.targetVox=[0.6055,0.6055,0.6055]; %desidered voxel size (resizing may be applied)
 opts.cropImage=0; %crop both stacks during stitching (0:no, 1:yes)
 opts.verbose=1; %display images while stitching (0:no, 1:yes)
@@ -153,26 +67,15 @@ opts.timeStep = 1;
 opts.resizeFactors=[0.2 0.2]; %image resizing factor used for stitching
 opts.zBest=[]; % z to use for stitching ([position z]; [] for automatic choice)
 opts.meta_pos=0; % whether or not to use metadata position to guide xcorr
-opts.laplacian_corr = 1; % use laplacian of the corr matrix for finding the stitching coordinates
+opts.laplacian_corr = 0; % use laplacian of the corr matrix for finding the stitching coordinates
 opts.skip_save_error = 0; % whether to skip error and continue running and save errors in a log file
 
 mkdir(paths.objFolder);
 mkdir(paths.outFolder);
 
-
-% fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-% scale='3'; 
-% hpp='';
-% st_dir1=dir([paths.inFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*']);
-% fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-% scale='7'; 
-% hpp='';
-% st_dir2=dir([paths.inFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*']);
-% st_dir = [st_dir1;st_dir2];
-
-fish='3'; % put the number of the fish/scale/hpp to process or '' to choose them all
-scale='7'; 
-hpp='552';
+fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
+scale=''; 
+hpp='';
 st_dir=dir([paths.inFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*']);
 
 tic
@@ -240,28 +143,7 @@ for i=1:numel(st_dir)
 
 end
 toc
-%% Change plucktime - only use this if you forgot to change plucktime in the intialization step and want to correct them
-paths=[];
-paths.masterFolder=dataFolder; %folder where data is stored
-paths.objFolder= [paths.masterFolder 'objects/']; %objects folder
 
-fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-scale=''; 
-hpp='';
-st_dir=dir([paths.objFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*' '.mat']);
- 
-for i=1:numel(st_dir)
-
-    disp('------------');
-    basename=st_dir(i).name;    
-    display(basename);
-    load([st_dir(i).folder filesep basename]);
-
-    myScale.pluckTime=pluckTime;
-    myScale.hppTrue=myScale.metadata{1}.hTimeStamp-datenum(pluckTime)*24;
-    wpathmat=[paths.objFolder basename '.mat'];  
-    save(wpathmat,'myScale');
-end
 %% Add time, scale and fish
 % This section reads the time-point filename and stores information on fish
 % number, scale number and time labels.
@@ -423,7 +305,7 @@ paths.inFolder  =  [paths.masterFolder 'stitched/']; % input folder stacks to ro
 paths.roiFolder  =  [paths.masterFolder 'cleaned/']; % folder provided ROIs
 paths.outFolder =  [paths.masterFolder 'cleaned/']; % output folder
 paths.objFolder =  [paths.masterFolder 'objects/']; % objects folder 
-paths.fastFolder = [paths.roiFolder filesep 'ROIproj/'];
+paths.fastFolder = [paths.roiFolder 'ROIproj/'];
 
 fish='';  % put the number of the fish/scale/hpp to process or '' to choose them all
 scale=''; 
@@ -471,9 +353,9 @@ paths.outFolder =  [paths.masterFolder 'cleaned/']; % output folder
 paths.objFolder =  [paths.masterFolder 'objects/']; % objects folder 
 paths.fastFolder = [paths.roiFolder filesep 'ROIproj/'];
 
-% fish='';  % put the number of the fish/scale/hpp to process or '' to choose them all
-% scale=''; 
-% hpp='';
+fish='';  % put the number of the fish/scale/hpp to process or '' to choose them all
+scale=''; 
+hpp='';
 st_dir=dir(strcat(paths.roiFolder,['fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*' ],'ROI.tif'));
 
 opts=[];
@@ -522,9 +404,9 @@ paths.outFolder =  [paths.masterFolder 'cleaned/cropped/']; % output folder
 paths.objFolder =  [paths.masterFolder 'objects/']; % objects folder 
 paths.fieldName=  'cleanedScale'; %struct where re-rotation parameters are read
 
-% fish='';  % put the number of the fish/scale/hpp to process or '' to choose them all
-% scale=''; 
-% hpp='';
+fish='';  % put the number of the fish/scale/hpp to process or '' to choose them all
+scale=''; 
+hpp='';
 st_dir=dir(strcat(paths.inFolder,['fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*' ],'ROI.tif'));
 
 opts=[];
@@ -552,9 +434,9 @@ paths.outFolder= [paths.masterFolder 'cleaned/resized4x/']; % output folder resi
 paths.objFolder= [paths.masterFolder 'objects/']; % objects folder
 paths.fieldName=  'resizeCropped'; % struct field resizing parameters
 
-% fish='';  % put the number of the fish/scale/hpp to process or '' to choose them all
-% scale=''; 
-% hpp='';
+fish='';  % put the number of the fish/scale/hpp to process or '' to choose them all
+scale=''; 
+hpp='';
 st_dir=dir([paths.inFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*' 'ch' num2str(chToResize) '.tif']);
 
 opts=[];
@@ -619,9 +501,9 @@ if(~useSavedParams)
     paths.fieldName=  'resizeCropped'; %struct field where parameters are read
     paths.rotFieldName = 'rotScale';    %struct field where rotation parameters are stored
 
-%     fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-%     scale=''; 
-%     hpp='';
+    fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
+    scale=''; 
+    hpp='';
     st_dir=dir([paths.objFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*' '.mat']);
 
     resizeFactor = 0.25; % resizing factor
@@ -658,9 +540,9 @@ paths.fieldName=  'rotScale'; %struct where re-rotation parameters are read
 
 useSavedParams = false; % use provided parameters (true: use provided parameters; false: use user parameters)
 
-% fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-% scale=''; 
-% hpp='';
+fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
+scale=''; 
+hpp='';
 
 st_dir=dir([paths.objFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*' '.mat']);
 
@@ -700,9 +582,9 @@ paths.inFolder=     [paths.masterFolder 'rotated/']; % input folder stack to equ
 paths.outFolder=    [paths.masterFolder 'equalized/']; % output folder equalized stacks
 paths.objFolder=    [paths.masterFolder 'objects/']; % objects folder
 
-% fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-% scale=''; 
-% hpp='';
+fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
+scale=''; 
+hpp='';
 st_dir=dir([paths.objFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*' '.mat']);
 
  % equalization
@@ -909,9 +791,9 @@ disp(["----------Start TGMM segmentation----------"]);
 paths.nameFolder=dataFolder_split{end-1};
 paths.masterFolder=dataFolder;
 
-% fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-% scale=''; 
-% hpp='';
+fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
+scale=''; 
+hpp='';
 if osteoblast
     tgmmFolder = 'TGMM_hypo_eq_ch2';
     datasource   = [paths.masterFolder  'divided_eq\']; % I use equalized images
@@ -1167,9 +1049,9 @@ paths.objFolder=    [paths.masterFolder 'objects/']; % myScale objects folder
 paths.roiFolder=    [paths.masterFolder 'rotated/']; % where the roi is stored
 paths.finalmaskFolder=    [paths.masterFolder 'finalmask/']; % where the roi is stored
 
-% fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-% scale=''; 
-% hpp='';
+fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
+scale=''; 
+hpp='';
 st_dir=dir([paths.objFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*' '.mat']);
 
 % writing options
@@ -1245,9 +1127,9 @@ paths.tgmmFolder=   [paths.masterFolder tgmmFolder '/objects/']; % TGMM objects 
 paths.plotFolder=    [paths.masterFolder 'QC/']; % where the roi is stored
 mkdir(paths.plotFolder);
 
-% fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-% scale=''; 
-% hpp='';
+fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
+scale=''; 
+hpp='';
 st_dir=dir([paths.objFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*' '.mat']);
 
 
@@ -1379,9 +1261,9 @@ paths.plotFolder=    [paths.masterFolder 'results/']; % where the roi is stored
 mkdir(paths.plotFolder);
 mkdir([paths.plotFolder filesep 'ERK_by_x'])
 
-% fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
-% scale=''; 
-% hpp='';
+fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
+scale=''; 
+hpp='';
 st_dir=dir([paths.objFolder 'fish'  num2str(fish) '*ray' num2str(scale) '*' num2str(hpp) 'hpa*' '.mat']);
 
 
