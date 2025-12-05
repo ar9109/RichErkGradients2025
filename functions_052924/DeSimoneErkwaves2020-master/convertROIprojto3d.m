@@ -2,11 +2,11 @@ function [roi] = convertROIprojto3d(myScale,paths, suffix)
 arguments
     myScale
     paths
-    suffix = 'ROIprojYX';
+    suffix = 'ROIprojYX.tif';
 end
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-path_YX = [paths.fastFolder filesep myScale.basename '_' suffix];
+path_YX = [paths.fastFolder myScale.basename '_' suffix];
 roi_YX=logical(loadtiff([path_YX]));
 path_YZ = [paths.fastFolder filesep myScale.basename '_ROIprojYZ.tif'];
 roi_YZ=logical(loadtiff([path_YZ]));
