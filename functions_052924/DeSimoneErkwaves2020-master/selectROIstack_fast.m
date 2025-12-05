@@ -24,13 +24,13 @@ adj=opts.adj;
 roi = [];
 
 
-% stack_YX = max(stack,[],3);
-% stack_YZ = squeeze(max(stack,[],2));
-% stack_ZX = squeeze(max(stack,[],1))';
+stack_YX = max(stack,[],3);
+stack_YZ = squeeze(max(stack,[],2));
+stack_ZX = squeeze(max(stack,[],1))';
 
-stack_YX = stack.YX;
-stack_YZ = stack.YZ;
-stack_ZX = stack.ZX;
+% stack_YX = stack.YX;
+% stack_YZ = stack.YZ;
+% stack_ZX = stack.ZX;
 
 disp('Please select the scale of interest in the three projections (Press Enter to move to the next view)');
  
