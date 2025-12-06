@@ -1,1 +1,0 @@
- mex -O readXMLmixtureGaussians.cpp GaussianMixtureModel.cpp constants.cpp external/xmlParser2/xmlParser.cpp -output readXMLmixtureGaussians
