@@ -1,12 +1,60 @@
 # RichErkGradients2025
 
-#This repository contains code, source data, and data sets for reproducing the analysis and figures. 
+This repository contains code, source data, and data sets for reproducing the analysis and figures from:  Decaying and expanding Erk gradients process memory of skeletal size during zebrafish fin regeneration
+Ashley Rich, Ziqi Lu, Alessandro De Simone, Lucas Garcia, Jacqueline Janssen, Kazunori
+Ando, Jianhong Ou, Massimo Vergassola, Kenneth D. Poss, & Stefano Di Talia
 
-# Requirements
-#This code was developed in MATLAB (Mathworks; version R2023b)
-#The image processing pipeline uses TGMM (Amat et al. 2014) to segment nuclei. The version used for this manuscript can be accessed at the following link: https://www.dropbox.com/scl/fo/lxgj9wf2rdrzsnvi7vy38/AH71h_sksydVsYdhNDrULiY?rlkey=2zwyihyigeddqp2q7it14wukf&st=2olmkwrm&dl=0
+Copyright (C)
 
-# Instructions for use
-#To run segementation software, download 'raw' data folder, open 'segmentation_pipeline.m' in MATLAB, and execute code. The TGMM software linked above and the 'tgmm_template' folder will need to be installed locally in the same directory as 'raw'.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-#To run code for generating figures, load the appropriate '.m' file. (To generate plots shown in Figure 3, load 'fig3.m'. Relevant data sets for Figure 3 are located in 'Fig3' directory.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+This code will perform image processing to quantify Erk activity and Geminin expression from images of regenerating zebrafish rays.
+
+The code requires MATLAB (MathWorks).
+The code runs in MATLAB_R2023b. The code runs on a 
+MacBook Pro (14-inch, November 2023) macOS Sonoma 14.4
+Processor Apple M3 Pro
+Memory 36 GB
+
+# INSTALLATION AND USAGE - Imaging Processing Code
+
+Source data files are included within this Github repo in the ‘raw’ folder.
+
+The image processing pipeline uses TGMM (Amat et al. 2014) to segment nuclei, which is too large to be included in this Github repo. The version used for this manuscript can be accessed at the following link: https://www.dropbox.com/scl/fo/lxgj9wf2rdrzsnvi7vy38/AH71h_sksydVsYdhNDrULiY?rlkey=2zwyihyigeddqp2q7it14wukf&st=2olmkwrm&dl=0. 
+
+To run the Imaging Processing code, the user should download from the Github repo ‘segmentation_pipeline.m’, raw’, ‘tgmm_template’, and ‘functions_052924’. The user should also download ‘TGMM_Supplementary_Software_1_0’ from the link above. The ‘.m’ file and the 4 directories should be collected into a single directory, for example, ‘processDirectory’.
+
+The user can run the image processing code by editing line 9 of ‘segmentation_pipeline.m’ 
+to set ‘workplace’ to appropriate directory on user’s local machine (i.e. ‘processDirectory’).
+MS Windows users have to adapt paths to MS Windows syntax.
+ 
+MATLAB Toolboxes required are:
+- Image Processing Toolbox (version 9.5)
+- Statistics and Machine Learning Toolbox (version 11.0)
+- Financial Toolbox (version 5.8)
+- Curve Fitting Toolbox (3.5.4)
+
+The code requires external MATLAB functions:
+loadtiff.m, saveastiff.m, weightedcov.m, xml2struct.m, nanconv.m,
+brewermap.m
+Those functions be downloaded from MathWorks. We attach them to the code together with
+their licenses.
+
+The script can run altogether or each section sequentially.
+In some instances, user input would be required.
+
+Data sample runtime: ~10 minutes
+
+# Installation and Usage - Figure Code
+To run code for generating figures, load the appropriate '.m' file. (To generate plots shown in Figure 3, load 'fig3.m'. Relevant data sets for Figure 3 are located in 'Fig3' directory.
