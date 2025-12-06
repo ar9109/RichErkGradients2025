@@ -1,7 +1,7 @@
 %% Supplemental Figure 6
 
 %% Supp. Fig. 6A
-%load "analysis_mat_dbin150.mat" from "SuppFig4" folder
+%load "analysis_mat_dbin150.mat" from "SuppFig6" folder
 
 %step 1 - create analysis matrix that only contains 120 hpa (pre) and 144 hpa (24 hr post) *
 

@@ -65,7 +65,7 @@ xlabel('Average Erk Activity (A.U.)');
 ylabel('Standard Deviation of Erk Activity (A.U.)')
 config_plot(f,c)
 
-%% Supp. Fig. 4E
+%% Supp. Fig. 4C
 % plot osteoblast density in space
 
 %load 1 of the following 4 matrices from "Supp Fig 4)
@@ -144,7 +144,7 @@ ylabel("1/Average Internuclear Distance (1/\mum)")
 %%%title({'7-14 dpa Rays (n=110)';'Drop Bins w/ few Nuc.'})
 set(gca,'fontsize',16)
 
-%% Supp. Fig. 4F
+%% Supp. Fig. 4D
 
 %load data matrix:
 %"/Users/ashleyrich/Desktop/analysis_mat_timeaverage_WTdataSet.mat" from
