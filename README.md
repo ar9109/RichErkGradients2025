@@ -4,6 +4,8 @@ This repository contains code, source data, and data sets for reproducing the an
 Ashley Rich, Ziqi Lu, Alessandro De Simone, Lucas Garcia, Jacqueline Janssen, Kazunori
 Ando, Jianhong Ou, Massimo Vergassola, Kenneth D. Poss, & Stefano Di Talia
 
+The imaging processing code found in 'segmentation_pipeline.m' will perform image processing to quantify Erk activity and Geminin expression from images of regenerating zebrafish rays.
+
 Copyright (C)
 
 This program is free software: you can redistribute it and/or modify
@@ -19,8 +21,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-This code will perform image processing to quantify Erk activity and Geminin expression from images of regenerating zebrafish rays.
-
 The code requires MATLAB (MathWorks).
 The code runs in MATLAB_R2023b. The code runs on a 
 MacBook Pro (14-inch, November 2023) macOS Sonoma 14.4
@@ -29,11 +29,11 @@ Memory 36 GB
 
 # INSTALLATION AND USAGE - Imaging Processing Code
 
-Source data files are included within this Github repo in the ‘raw’ folder.
+A set of example source data files are included within this Github repo in the ‘raw’ folder.
 
 The image processing pipeline uses TGMM (Amat et al. 2014) to segment nuclei, which is too large to be included in this Github repo. The version used for this manuscript can be accessed at the following link: https://www.dropbox.com/scl/fo/lxgj9wf2rdrzsnvi7vy38/AH71h_sksydVsYdhNDrULiY?rlkey=2zwyihyigeddqp2q7it14wukf&st=2olmkwrm&dl=0. 
 
-To run the Imaging Processing code, the user should download from the Github repo ‘segmentation_pipeline.m’, raw’, ‘tgmm_template’, and ‘functions_052924’. The user should also download ‘TGMM_Supplementary_Software_1_0’ from the link above. The ‘.m’ file and the 4 directories should be collected into a single directory, for example, ‘processDirectory’.
+To run 'segmentation_pipeline.m', the user should download from the Github repo ‘segmentation_pipeline.m’, 'raw’, ‘tgmm_template’, and ‘functions_052924’. The user should also download ‘TGMM_Supplementary_Software_1_0’ from the link above. The ‘.m’ file and the 4 directories should be collected into a single directory, for example, ‘processDirectory’.
 
 The user can run the image processing code by editing line 9 of ‘segmentation_pipeline.m’ 
 to set ‘workplace’ to appropriate directory on user’s local machine (i.e. ‘processDirectory’).
@@ -54,7 +54,9 @@ their licenses.
 The script can run altogether or each section sequentially.
 In some instances, user input would be required.
 
+TGMM segmentation step must be run on MS Windows.
+
 Data sample runtime: ~10 minutes
 
 # Installation and Usage - Figure Code
-To run code for generating figures, load the appropriate '.m' file. (To generate plots shown in Figure 3, load 'fig3.m'. Relevant data sets for Figure 3 are located in 'Fig3' directory.
+To run code for generating figures, load the appropriate '.m' file. (For example, to generate plots shown in Figure 3, load 'fig3.m'. Relevant data sets for Figure 3 are located in 'Fig3' directory.) '.m' files for each figure may call functions that can be found in 'functions_052924'.
