@@ -1,6 +1,6 @@
 %% preparation
 %%%%
-% this pipeline is compatible with MATLAB2021b
+% this pipeline is compatible with MATLAB_R2023b
 clear;clc;close all;
 addpath(genpath('./functions_052924/'))
 
@@ -1505,3 +1505,4 @@ end
 %%
 disp('----------segmentation pipeline finished----------')
 toc(tStart)
+
