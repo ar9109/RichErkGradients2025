@@ -332,7 +332,7 @@ color_map_red=colormap(cbrewer2('Reds',tLevels));
 
 
 
-%step 3 - plot Fig. 4C
+%step 3 - plot Fig. 3D
 % plot f(u) average of groups
 
 
@@ -362,7 +362,7 @@ legend([a,b,c,d,e,f], legend_name,...
 
 set(gca,'XDir','reverse','fontsize',16)
 
-%step 4 - plot 4D
+%step 4 - plot 3E
 % plot f(u) average of groups - by Time
 g2 = figure;
 
@@ -584,7 +584,3 @@ legend_name={
         strcat("phi > 0.9 (10)")};
 legend([bbb,ccc,ddd,eee,fff,ggg,hhh,iii,jjj,kkk], legend_name,...
         'Location','northeast','color','none','box','off');
-
-
-
-%% Fig. 4F
