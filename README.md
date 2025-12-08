@@ -34,8 +34,8 @@ The image processing pipeline uses TGMM (Amat et al. 2014) to segment nuclei, wh
 To run 'segmentation_pipeline.m', the user should download from the Github repo ‘segmentation_pipeline.m’, 'raw’, ‘tgmm_template’, and ‘functions_052924’. The user should also download ‘TGMM_Supplementary_Software_1_0’ from the link above. The ‘.m’ file and the 4 directories should be collected into a single directory, for example, ‘processDirectory’.
 
 The user can run the image processing code by editing line 9 of ‘segmentation_pipeline.m’ 
-to set ‘workplace’ to appropriate directory on user’s local machine (i.e. ‘processDirectory’).
-MS Windows users have to adapt paths to MS Windows syntax.
+to set ‘workplace’ to appropriate directory on user’s local machine (i.e. ‘processDirectory’). Note set the working MATLAB directory to 'processDirectory' before running 'segmentation_pipeline.m'.
+
  
 MATLAB Toolboxes required are:
 - Image Processing Toolbox (version 9.5)
