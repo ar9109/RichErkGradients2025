@@ -1,0 +1,5 @@
+Image basename = C:\Users\User\Downloads\processDirectory\TGMM_hypo_eq_ch2\data\fish3_ray2_120hpa_ch2_hypo_t00
+Radius median filter = 2
+Min tau =2
+Background threshold = 10
+Conn3D = 74

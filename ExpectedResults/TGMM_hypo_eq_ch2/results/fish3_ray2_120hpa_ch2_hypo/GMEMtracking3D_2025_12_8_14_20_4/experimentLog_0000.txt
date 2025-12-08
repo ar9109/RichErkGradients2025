@@ -1,0 +1,36 @@
+Program called with the following command:
+TGMM.exe C:\Users\User\Downloads\processDirectory\TGMM_hypo_eq_ch2\TGMMconfig\fish3_ray2_120hpa_ch2_hypo_config.txt 0 1 
+minPi_kForDead=1e-005
+maxGaussiansPerVoxel=5
+imgFilePattern=C:\Users\User\Downloads\processDirectory\TGMM_hypo_eq_ch2\data\fish3_ray2_120hpa_ch2_hypo_t??
+maxIterEM=100
+tolLikelihood=1e-006
+betaPercentageOfN_k=0.01
+nuPercentageOfN_k=1
+alphaPercentage = 0.8
+thrSplitScore=-1
+thrCellDivisionPlaneDistance=3.2
+thrPrcentile=0
+estimateOpticalFlow=0
+deathThrOpticalFlow=-1
+maxDistPartitionNeigh=80
+persistanceSegmentationTau=8
+maxNumKNNsupervoxel=10
+maxDistKNNsupervoxel=41
+temporalWindowForLogicalRules (radius)=1
+anisotropyZ=1
+offset file = empty
+thrBackgroundDetectorHigh=0.7
+thrBackgroundDetectorLow=0.1
+short-lived duaghter thre = 5
+radiusMedianFilter =2
+minTau =2
+backgroundThreshold =10
+conn3D =74
+regularizePrecisionMatrixConstants_lambdaMin = 0.02
+regularizePrecisionMatrixConstants_lambdaMax = 0.2222
+regularizePrecisionMatrixConstants_maxExcentricity = 9
+Trim supervoxel minNucleiSize = 25
+Trim supervoxel maxNucleiSize =2500
+Trim supervoxel maxPercentileTrimSV = 0.4
+Trim supervoxel conn3DsvTrim = 6
