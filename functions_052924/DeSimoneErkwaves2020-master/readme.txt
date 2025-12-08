@@ -1,3 +1,5 @@
+Note: this readme is reproduced from De Simone et al. 2021, Nature for reference. Please refer to the 'README.md' file in the main directory of this repo for instructions running code relevant to the present manuscript.
+
 Zebrafish scale image processing, Erk activity and tissue flows quantification sample code from:
 Alessandro De Simone, Maya N. Evanitsky, Luke Hayden, Ben D. Cox, Julia Wang, Valerie A. Tornini, Jianhong Ou, Anna Chao, Kenneth D. Poss, Stefano Di Talia
 Control of osteoblast regeneration by a train of Erk activity waves 
