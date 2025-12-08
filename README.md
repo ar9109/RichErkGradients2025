@@ -6,8 +6,6 @@ Ando, Jianhong Ou, Massimo Vergassola, Kenneth D. Poss, & Stefano Di Talia
 
 The imaging processing code found in 'segmentation_pipeline.m' will perform image processing to quantify Erk activity and Geminin expression from images of regenerating zebrafish rays.
 
-Copyright (C)
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
