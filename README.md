@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 The code requires MATLAB (MathWorks).
 The code runs in MATLAB_R2023b. 
-The code runs on a Titan Desktop Workstation running Windows 11 Pro (Version 24H2, OS build 26100.6584). Processor: AMD Ryzen Threadripper PRO 5955WX 16-Cores (4.00 GHz). Installed RAM     256 GB.
+The code runs on a Titan Desktop Workstation running Windows 11 Pro (Version 24H2, OS build 26100.6584). Processor: AMD Ryzen Threadripper PRO 5955WX 16-Cores (4.00 GHz). Installed RAM 256 GB.
 
 # INSTALLATION AND USAGE - Imaging Processing Code
 
