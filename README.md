@@ -54,7 +54,9 @@ In some instances, user input would be required.
 
 TGMM segmentation step must be run on MS Windows.
 
-Data sample runtime: ~10 minutes
+Data sample runtime: ~10 minutes.
+
+Expected outcome from each step are located in 'ExpectedResults' directory. Final outputs of imaging processing pipeline are found in 'ExpectedResults/ERK_activity_map' and 'ExpectedResults/results'.
 
 # Installation and Usage - Figure Code
 To run code for generating figures, load the appropriate '.m' file. (For example, to generate plots shown in Figure 3, load 'fig3.m'. Relevant data sets for Figure 3 are located in 'Fig3' directory.) '.m' files for each figure may call functions that can be found in 'functions_052924'.
