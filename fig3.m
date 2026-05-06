@@ -4,7 +4,7 @@
 
 % Plot lreg v. time - red - all fish
  
-figure;
+f = figure;
 
 ERKall = [];
 %for fish = 2
@@ -71,23 +71,28 @@ for fish = 1:55
     if ~isempty(plotXcollect)
     %set up color map
     tLevels = 101;
-    color_map=colormap(cbrewer2('Reds',tLevels));
+    %color_map=colormap(cbrewer2('Reds',tLevels));
+    myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+    colormap(myColors);                  % Apply it to the FIGURE
     lampMinHere = 706;
     lampMaxHere = 4053;            
     colorCode = ((LampHere-706)./3353).*100+1; %%% 699 will need to be edited 
     
-    plot(plotXcollect./24,plotYcollect,'.-','color',color_map((round(colorCode)),:),'MarkerSize',30,'linewidth',2); hold on;
+    plot(plotXcollect./24,plotYcollect,'.-','color',myColors((round(colorCode)),:),'MarkerSize',30,'linewidth',2); hold on;
     else
         continue
     end
     
     %ylim([0 1500]);
-    %xlim([4 8]);
+    xlim([2 15]);
     xlabel('Time (dpa)');
     ylabel('Length Regenerated (\mum)');
-    title(FileName1);
+    %title(FileName1);
     set(gca, 'fontsize', 20);
     
+    c = colorbar();
+    set(c,'TickLabels',{'700','1380','2060','2740','3420','4100'});
+    c.Label.String = 'Length Amputated (um)';
     %c= colorbar('Ticks', 48:24:336,'TickLabels',{'48','72','96','120','144','168','192','216','240','264','288','312','336'});
     %caxis([tmin tmax])
     %c.FontSize = 10;
@@ -95,6 +100,8 @@ for fish = 1:55
     set(gca, 'fontsize', 20);
     end
 end
+
+saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Lreg_v_Time_viridis.png');
 
 %% Fig. 3c
 
@@ -141,7 +148,9 @@ LampCollect = LampCollect';
 [fit_obj,fit_gof] = fit(xdata(:),ydata(:),ft,foKTR);
 
 tLevels = 101;
-color_map=colormap(cbrewer2('Reds',tLevels));
+%color_map=colormap(cbrewer2('Reds',tLevels));
+myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(myColors);                  % Apply it to the FIGURE
 lampMinHere = 706;
 lampMaxHere = 4053;
 
@@ -162,7 +171,7 @@ bin_y_large = [];
 
 for zz = 1:size(xdata,2)
     colorCode = ((LampCollect(zz)-700)./3353).*100+1;
-    p_all = plot(xdata(zz),ydata(zz),'o','color',color_map((round(colorCode)),:),'linewidth',2); hold on;
+    p_all = plot(xdata(zz),ydata(zz),'o','color',myColors((round(colorCode)),:),'linewidth',2); hold on;
     if LampCollect(zz) < 1575
         bin_x_small = vertcat(bin_x_small,xdata(zz));
         bin_y_small = vertcat(bin_y_small,ydata(zz));
@@ -182,11 +191,11 @@ end
 [fit_obj_large,fit_gof_large] = fit(bin_x_large,bin_y_large,ft,foKTR);
 
 p_fit_small = plot_fit(fit_obj_small,fit_x,fit_gof_small,confidence=false);
-set(p_fit_small,'linewidth',2,'color',[1 0.5 0.5]);
+set(p_fit_small,'linewidth',2,'color',myColors(34,:));
 p_fit_med = plot_fit(fit_obj_med,fit_x,fit_gof_med,confidence=false);
-set(p_fit_med,'linewidth',2,'color',[1 0 0]);
+set(p_fit_med,'linewidth',2,'color',myColors(68,:));
 p_fit_large = plot_fit(fit_obj_large,fit_x,fit_gof_large,confidence=false);
-set(p_fit_large,'linewidth',2,'color',[0.5 0 0]);
+set(p_fit_large,'linewidth',2,'color',myColors(101,:));
 p_fit = plot_fit(fit_obj,fit_x,fit_gof,confidence=false);
 
 
@@ -211,16 +220,20 @@ config_plot(f);
 % % %     legend([fit_plot,fit_plot_mag], legend_name,...
 % % %         'Location','best','color','none','box','off');
 
-    legend([p_fit,p_fit_small,p_fit_med,p_fit_large], legend_name,...
+    legend([p_fit,p_fit_large,p_fit_med,p_fit_small], legend_name,...
         'Location','best','color','none','box','off');
     %legend([fit_plot,fit_plot_mag],["1","2"])
 %end
 
-color_map=colormap(cbrewer2('Reds',tLevels));
+%color_map=colormap(cbrewer2('Reds',tLevels));
+colormap(myColors);                  % Apply it to the FIGURE
 g = colorbar;
 %set(g,'TickLabels',{'0','811','1621','2432','3242','4053'});%,'2740','3080','3420','3760','4100'})
 set(g,'TickLabels',{'700','1380','2060','2740','3420','4100'});
 g.Label.String = 'Length Amputated (um)';
+
+saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/mean_ktr_by_phi_adjustY_3groups.png');
+
 
 %% Fig. 3D & 3E
 
@@ -325,10 +338,14 @@ end
 
 %step 2
 % color map
-tLevels = 10;
-color_map_blue=colormap(cbrewer2('Blues',tLevels));
+tLevels2 = 10;
+color_map_blue=colormap(cbrewer2('Blues',tLevels2));
 
-color_map_red=colormap(cbrewer2('Reds',tLevels));
+color_map_red=colormap(cbrewer2('Reds',tLevels2));
+
+tLevels = 101;
+myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(myColors);                  % Apply it to the FIGURE
 
 
 
@@ -338,11 +355,19 @@ color_map_red=colormap(cbrewer2('Reds',tLevels));
 
 g = figure;
 
-b = errorbar(mean(bin_x_1amp,2),nanmean(bin_y_1amp,2),(nanstd(bin_y_1amp,0,2)./sqrt(size(bin_y_1amp,2))),'-','color',[0.9966 0.8899 0.8395],'markersize',10,'LineWidth',4); hold on;
-c = errorbar(mean(bin_x_2amp,2),nanmean(bin_y_2amp,2),(nanstd(bin_y_2amp,0,2)./sqrt(size(bin_y_2amp,2))),'-','color',[0.9884 0.6262 0.5059],'markersize',10,'LineWidth',4);
-d = errorbar(mean(bin_x_3amp,2),nanmean(bin_y_3amp,2),(nanstd(bin_y_3amp,0,2)./sqrt(size(bin_y_3amp,2))),'-','color',[0.9746 0.3327 0.2330],'markersize',10,'LineWidth',4);
-e = errorbar(mean(bin_x_4amp,2),nanmean(bin_y_4amp,2),(nanstd(bin_y_4amp,0,2)./sqrt(size(bin_y_4amp,2))),'-','color',[0.7664 0.0711 0.1052],'markersize',10,'LineWidth',4);
-f = errorbar(mean(bin_x_5amp,2),nanmean(bin_y_5amp,2),(nanstd(bin_y_5amp,0,2)./sqrt(size(bin_y_5amp,2))),'-','color',[0.4039 0 0.0510],'markersize',10,'LineWidth',4);
+% b = errorbar(mean(bin_x_1amp,2),nanmean(bin_y_1amp,2),(nanstd(bin_y_1amp,0,2)./sqrt(size(bin_y_1amp,2))),'-','color',[0.9966 0.8899 0.8395],'markersize',10,'LineWidth',4); hold on;
+% c = errorbar(mean(bin_x_2amp,2),nanmean(bin_y_2amp,2),(nanstd(bin_y_2amp,0,2)./sqrt(size(bin_y_2amp,2))),'-','color',[0.9884 0.6262 0.5059],'markersize',10,'LineWidth',4);
+% d = errorbar(mean(bin_x_3amp,2),nanmean(bin_y_3amp,2),(nanstd(bin_y_3amp,0,2)./sqrt(size(bin_y_3amp,2))),'-','color',[0.9746 0.3327 0.2330],'markersize',10,'LineWidth',4);
+% e = errorbar(mean(bin_x_4amp,2),nanmean(bin_y_4amp,2),(nanstd(bin_y_4amp,0,2)./sqrt(size(bin_y_4amp,2))),'-','color',[0.7664 0.0711 0.1052],'markersize',10,'LineWidth',4);
+% f = errorbar(mean(bin_x_5amp,2),nanmean(bin_y_5amp,2),(nanstd(bin_y_5amp,0,2)./sqrt(size(bin_y_5amp,2))),'-','color',[0.4039 0 0.0510],'markersize',10,'LineWidth',4);
+% a = errorbar([0.05:0.1:0.95]',nanmean(data.y,2),nanstd(data.y,0,2)./sqrt(size(data.y,2)),'-','color','k','markersize',10,'LineWidth',4); 
+% hold off;
+
+b = errorbar(mean(bin_x_1amp,2),nanmean(bin_y_1amp,2),(nanstd(bin_y_1amp,0,2)./sqrt(size(bin_y_1amp,2))),'-','color',myColors(1,:),'markersize',10,'LineWidth',4); hold on;
+c = errorbar(mean(bin_x_2amp,2),nanmean(bin_y_2amp,2),(nanstd(bin_y_2amp,0,2)./sqrt(size(bin_y_2amp,2))),'-','color',myColors(26,:),'markersize',10,'LineWidth',4);
+d = errorbar(mean(bin_x_3amp,2),nanmean(bin_y_3amp,2),(nanstd(bin_y_3amp,0,2)./sqrt(size(bin_y_3amp,2))),'-','color',myColors(51,:),'markersize',10,'LineWidth',4);
+e = errorbar(mean(bin_x_4amp,2),nanmean(bin_y_4amp,2),(nanstd(bin_y_4amp,0,2)./sqrt(size(bin_y_4amp,2))),'-','color',myColors(76,:),'markersize',10,'LineWidth',4);
+f = errorbar(mean(bin_x_5amp,2),nanmean(bin_y_5amp,2),(nanstd(bin_y_5amp,0,2)./sqrt(size(bin_y_5amp,2))),'-','color',myColors(101,:),'markersize',10,'LineWidth',4);
 a = errorbar([0.05:0.1:0.95]',nanmean(data.y,2),nanstd(data.y,0,2)./sqrt(size(data.y,2)),'-','color','k','markersize',10,'LineWidth',4); 
 hold off;
 
@@ -395,6 +420,10 @@ legend_name={strcat("All Data (180)")...
         strcat("12.5+ dpa (12)")};
 legend([aa,bb,cc,dd,ee,ff], legend_name,...
         'Location','northwest','color','none','box','off');
+
+saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/fu_subtractFirst_timeAverages_byLamp.png');
+saveas(g2,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/fu_subtractFirst_timeAverages_byTime.png');
+
 
 %%  Fig. 3F
 

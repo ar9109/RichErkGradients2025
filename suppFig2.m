@@ -6,9 +6,11 @@ analysis_mat = analysis_mat_ERKthresh10;
 
 %set up colors
 tLevels = 12;
-brew = cbrewer2('Reds',tLevels);
+%brew = cbrewer2('Reds',tLevels);
 %color_map=colormap(cbrewer2('Reds',tLevels));
-color_map=colormap(brew(2:12,:));
+%color_map=colormap(brew(2:12,:));
+myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(myColors);                  % Apply it to the FIGURE
 LampMin = 706;
 LampMax = 4053;
 %LampColorThresh = linspace(LampMin,LampMax,5);
@@ -118,7 +120,8 @@ foKTR = fitoptions('Method','LinearLeastSquares',...
 
              colorCode = round((((LampHere-LampMin)./LampMax)).*10);
 % 
-             cl = color_map(colorCode+1,:);
+             %cl = color_map(colorCode+1,:);
+             cl = myColors(colorCode,:);
 % 
 %             cl = horzcat(cl,0.5);
 
@@ -136,9 +139,11 @@ foKTR = fitoptions('Method','LinearLeastSquares',...
             elseif rayHere == 7
                 clRight = [0.9928 0.8185 0.7419 0.5];
             end
-            p = plot(xdata./24,ydata,'.','Color',clRight,'MarkerSize',30,'linewidth',2); hold on;
+            %p = plot(xdata./24,ydata,'.','Color',clRight,'MarkerSize',30,'linewidth',2); hold on;
+            plot(xdata./24,ydata,'.','Color',cl,'MarkerSize',30,'linewidth',2); hold on;
             pfit = plot(fit_obj);
-            set(pfit,'linewidt',2,'color',clRight);
+            %set(pfit,'linewidt',2,'color',clRight);
+            set(pfit,'linewidt',2,'color',cl);
             
             ylim([0,0.6]);
             xlim([0,400]);
@@ -174,6 +179,9 @@ foKTR = fitoptions('Method','LinearLeastSquares',...
             %close figure 1;
             %close figure 3;
 
+            saveas(p,['/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/ExtDataFig2_fish' num2str(fishHere1) '_ray' num2str(rayHere1) '.png']);
+          
+
 
 
         end
@@ -185,7 +193,7 @@ foKTR = fitoptions('Method','LinearLeastSquares',...
 
 % Plot phi v. time - red - all fish
 
-figure;
+f = figure;
 
 ERKall = [];
 %for fish = 2
@@ -239,18 +247,20 @@ for fish = 1:55
     if ~isempty(plotXcollect)
     %set up color map
     tLevels = 101;
-    color_map=colormap(cbrewer2('Reds',tLevels));
+    %color_map=colormap(cbrewer2('Reds',tLevels));
+    myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+    colormap(myColors);                  % Apply it to the FIGURE
     lampMinHere = 706;
     lampMaxHere = 4053;            
     colorCode = ((LampHere-706)./3353).*100+1; %%% 699 will need to be edited 
     
-    plot(plotXcollect./24,plotYcollect,'.-','color',color_map((round(colorCode)),:),'MarkerSize',30,'linewidth',2); hold on;
+    plot(plotXcollect./24,plotYcollect,'.-','color',myColors((round(colorCode)),:),'MarkerSize',30,'linewidth',2); hold on;
     else
         continue
     end
     
     %ylim([0 1500]);
-    %xlim([4 8]);
+    xlim([2 15]);
     xlabel('Time (dpa)');
     ylabel('Fraction Regenerated');
     %title(FileName1);
@@ -263,6 +273,8 @@ for fish = 1:55
     set(gca, 'fontsize', 16);
     end
 end
+
+saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/phi_v_time_viridis.png');
 
 %% Supp. Fig. 2E
 % Average ERK by time color by Lamp
@@ -306,7 +318,9 @@ LampCollect = LampCollect';
 [fit_obj,fit_gof] = fit(xdata(:),ydata(:),ft,foKTR);
 
 tLevels = 101;
-color_map=colormap(cbrewer2('Reds',tLevels));
+%color_map=colormap(cbrewer2('Reds',tLevels));
+myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(myColors);                  % Apply it to the FIGURE
 lampMinHere = 706;
 lampMaxHere = 4053;
 
@@ -327,7 +341,7 @@ bin_y_large = [];
 
 for zz = 1:size(xdata,2)
     colorCode = ((LampCollect(zz)-700)./3353).*100+1;
-    p_all = plot(xdata(zz),ydata(zz),'o','color',color_map((round(colorCode)),:),'linewidth',2); hold on;
+    p_all = plot(xdata(zz),ydata(zz),'o','color',myColors((round(colorCode)),:),'linewidth',2); hold on;
     if LampCollect(zz) < 1575
         bin_x_small = vertcat(bin_x_small,xdata(zz));
         bin_y_small = vertcat(bin_y_small,ydata(zz));
@@ -349,11 +363,11 @@ fit_x = linspace(round(min(time))-1,round(max(time))+1,100);
 [fit_obj_large,fit_gof_large] = fit(bin_x_large,bin_y_large,ft,foKTR);
 
 p_fit_small = plot_fit(fit_obj_small,fit_x,fit_gof_small,confidence=false);
-set(p_fit_small,'linewidth',2,'color',[1 0.5 0.5]);
+set(p_fit_small,'linewidth',2,'color',myColors(34,:));
 p_fit_med = plot_fit(fit_obj_med,fit_x,fit_gof_med,confidence=false);
-set(p_fit_med,'linewidth',2,'color',[1 0 0]);
+set(p_fit_med,'linewidth',2,'color',myColors(68,:));
 p_fit_large = plot_fit(fit_obj_large,fit_x,fit_gof_large,confidence=false);
-set(p_fit_large,'linewidth',2,'color',[0.5 0 0]);
+set(p_fit_large,'linewidth',2,'color',myColors(101,:));
 
 p_fit = plot_fit(fit_obj,fit_x,fit_gof,confidence=false);
 xlabel('Time (hours post amp.)')
@@ -366,14 +380,15 @@ ylabel('Average ERK Activity (rescaled space,u)')
 config_plot(f);
 
 legend_name={strcat("R^2 = ",num2str(round(fit_gof.rsquare,1))),...
-    strcat("R^2 = ", num2str(round(fit_gof_small.rsquare,1))),...
+    strcat("R^2 = ", num2str(round(fit_gof_large.rsquare,1))),...
     strcat("R^2 = ", num2str(round(fit_gof_med.rsquare,1))),...
-    strcat("R^2 = ", num2str(round(fit_gof_large.rsquare,1)))};
+    strcat("R^2 = ", num2str(round(fit_gof_small.rsquare,1)))};
 
-legend([p_fit,p_fit_small,p_fit_med,p_fit_large], legend_name,...
+legend([p_fit,p_fit_large,p_fit_med,p_fit_small], legend_name,...
     'Location','best','color','none','box','off');
 
-color_map=colormap(cbrewer2('Reds',tLevels));
+%color_map=colormap(cbrewer2('Reds',tLevels));
+colormap(myColors);
 g = colorbar;
 %set(g,'TickLabels',{'0','811','1621','2432','3242','4053'});%,'2740','3080','3420','3760','4100'})
 set(g,'TickLabels',{'700','1380','2060','2740','3420','4100'});
@@ -383,6 +398,9 @@ g.Label.String = 'Length Amputated (um)';
 ylim([0,0.5]);
 %%%ylim([0.6,1.4])
 %xlim([0,1.4])
+
+saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/mean_ktr_by_time_adjustY_3groups_viridis.png');
+
 
 %% Supp. Fig 2F & G - run next several blocks
 

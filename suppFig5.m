@@ -4,7 +4,8 @@
 %Excel file is found in "SuppFig5" folder. 
 %Please update the path information (line 7) for importing the matrix
 
-LOFdata = readmatrix('/Volumes/AshleyData3/31Oct22_LongfinTimecourse/31Oct22_LongfinTimecourse.xlsx');
+%LOFdata = readmatrix('/Volumes/AshleyData3/31Oct22_LongfinTimecourse/31Oct22_LongfinTimecourse.xlsx');
+LOFdata = readmatrix('/Users/ashleyrich/Documents/GitHub/RichErkGradients2025/SuppFig5/31Oct22_LongfinTimecourse.xlsx');
 
 % Collect data
 
@@ -47,8 +48,10 @@ LampMeasurementsWT = LampMeasurements(1:36,:);
 % LampColorThresh = round(LampColorThresh);
 
 tLevels = 12;
-brew = cbrewer2('Reds',tLevels);
-color_map=colormap(brew(2:12,:));
+%%%brew = cbrewer2('Reds',tLevels);
+%%%color_map=colormap(brew(2:12,:));
+myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(myColors);                  % Apply it to the FIGURE
 LampMin = min(LampMeasurementsWT);
 LampMax = max(LampMeasurementsWT);
 %close;
@@ -70,7 +73,8 @@ for i = 1:36
 %             end
         LampHere = LampMeasurements(i);
         colorCode = round((((LampHere-LampMin)./(LampMax-LampMin))).*10);
-        cl = color_map(colorCode+1,:);
+        %%%cl = color_map(colorCode+1,:);
+        cl = myColors(colorCode+1,:);
         cl = horzcat(cl);
     plot(timePoints,selectData(i,3:15),'-','LineWidth',1,'color',cl); hold on;
     %colorCode
@@ -90,12 +94,15 @@ ylim([0,1.2]); %changed 9Aug24
 %linspace(LampMin,LampMax,11);
 
 
-color_map=colormap(brew(2:12,:));
+%color_map=colormap(brew(2:12,:));
+colormap(myColors);
 g = colorbar;
 caxis([LampMin,LampMax]);
 g.Label.String = 'Length Amputated (\mum)';
 
-%Generate Supp. Fig. 5C
+saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Fig5B.png')
+
+%% Generate Supp. Fig. 5C
 % Generate LOF timecourse plot
 
 figure;
@@ -108,8 +115,10 @@ LampMeasurementsLOF = LampMeasurements(37:72,:);
 
 %set up colors
 tLevels = 12;
-brew = cbrewer2('Reds',tLevels);
-color_map=colormap(brew(2:12,:));
+%%%brew = cbrewer2('Reds',tLevels);
+%%%color_map=colormap(brew(2:12,:));
+myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(myColors);                  % Apply it to the FIGURE
 LampMin = min(LampMeasurementsLOF);
 LampMax = max(LampMeasurementsLOF);
 close;
@@ -133,7 +142,7 @@ for q = 37:72
     %             end
             LampHere = LampMeasurements(q);
             colorCode = round((((LampHere-LampMin)./(LampMax-LampMin))).*10);
-            cl = color_map(colorCode+1,:);
+            cl = myColors(colorCode+1,:);
             cl = horzcat(cl);
         plot(timePoints,selectData(q,3:15),'--','LineWidth',1,'color',cl); hold on;
         end 
@@ -148,10 +157,14 @@ set(gca,'fontsize',16);
 yline(1,'--');
 ylim([0,3]);
 
-color_map=colormap(brew(2:12,:));
+%color_map=colormap(brew(2:12,:));
+colormap(myColors);
 g = colorbar;
 caxis([LampMin,LampMax]);
 g.Label.String = 'Length Amputated (\mum)';
+
+saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Fig5C.png')
+
 
 
 %% Supp. Fig. 5D

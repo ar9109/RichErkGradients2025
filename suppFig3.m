@@ -569,21 +569,24 @@ for i = 1:size(data.x,2)
 end
 
 %Step 2:  set up colors ***
-tLevels = 10;
-color_map_blue=colormap(cbrewer2('Blues',tLevels));
+tLevels = 101;
+%color_map_blue=colormap(cbrewer2('Blues',tLevels));
 
-color_map_red=colormap(cbrewer2('Reds',tLevels));
+%color_map_red=colormap(cbrewer2('Reds',tLevels));
+
+myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(myColors);                  % Apply it to the FIGURE
 
 %Step 3:  plot f(u) average of groups ***
 
 
 g = figure;
 
-b = errorbar(mean(bin_x_1amp,2),nanmean(bin_y_1amp,2),(nanstd(bin_y_1amp,0,2)./sqrt(size(bin_y_1amp,2))),'-','color',[0.9966 0.8899 0.8395],'markersize',10,'LineWidth',4); hold on;
-c = errorbar(mean(bin_x_2amp,2),nanmean(bin_y_2amp,2),(nanstd(bin_y_2amp,0,2)./sqrt(size(bin_y_2amp,2))),'-','color',[0.9884 0.6262 0.5059],'markersize',10,'LineWidth',4);
-d = errorbar(mean(bin_x_3amp,2),nanmean(bin_y_3amp,2),(nanstd(bin_y_3amp,0,2)./sqrt(size(bin_y_3amp,2))),'-','color',[0.9746 0.3327 0.2330],'markersize',10,'LineWidth',4);
-e = errorbar(mean(bin_x_4amp,2),nanmean(bin_y_4amp,2),(nanstd(bin_y_4amp,0,2)./sqrt(size(bin_y_4amp,2))),'-','color',[0.7664 0.0711 0.1052],'markersize',10,'LineWidth',4);
-f = errorbar(mean(bin_x_5amp,2),nanmean(bin_y_5amp,2),(nanstd(bin_y_5amp,0,2)./sqrt(size(bin_y_5amp,2))),'-','color',[0.4039 0 0.0510],'markersize',10,'LineWidth',4);
+b = errorbar(mean(bin_x_1amp,2),nanmean(bin_y_1amp,2),(nanstd(bin_y_1amp,0,2)./sqrt(size(bin_y_1amp,2))),'-','color',myColors(1,:),'markersize',10,'LineWidth',4); hold on;
+c = errorbar(mean(bin_x_2amp,2),nanmean(bin_y_2amp,2),(nanstd(bin_y_2amp,0,2)./sqrt(size(bin_y_2amp,2))),'-','color',myColors(26,:),'markersize',10,'LineWidth',4);
+d = errorbar(mean(bin_x_3amp,2),nanmean(bin_y_3amp,2),(nanstd(bin_y_3amp,0,2)./sqrt(size(bin_y_3amp,2))),'-','color',myColors(51,:),'markersize',10,'LineWidth',4);
+e = errorbar(mean(bin_x_4amp,2),nanmean(bin_y_4amp,2),(nanstd(bin_y_4amp,0,2)./sqrt(size(bin_y_4amp,2))),'-','color',myColors(76,:),'markersize',10,'LineWidth',4);
+f = errorbar(mean(bin_x_5amp,2),nanmean(bin_y_5amp,2),(nanstd(bin_y_5amp,0,2)./sqrt(size(bin_y_5amp,2))),'-','color',myColors(101,:),'markersize',10,'LineWidth',4);
 a = errorbar([0.05:0.1:0.95]',nanmean(data.y,2),nanstd(data.y,0,2)./sqrt(size(data.y,2)),'-','color','k','markersize',10,'LineWidth',4); 
 hold off;
 
@@ -603,6 +606,7 @@ legend([a,b,c,d,e,f], legend_name,...
 
 set(gca,'XDir','reverse','fontsize',16)
 
+saveas(f,['/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/extDataFig3C_right.png']);
 
 
 %% Supp. Fig. 3D -left
@@ -895,7 +899,9 @@ foKTR = fitoptions('Method','LinearLeastSquares',...
 
 % plot
 tLevels = 101;
-color_map=colormap(cbrewer2('Reds',tLevels));
+%color_map=colormap(cbrewer2('Reds',tLevels));
+myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(myColors);                  % Apply it to the FIGURE
 
 tt=[];
 color_res = 100;
@@ -934,12 +940,12 @@ for i = numel(analysis_mat_timeaverage):-1:1
 %         tt = [tt,i];
 %     end
     colorCode = round(((L_amp(i)-700)./3353).*100+1);
-    plot(x_plot,y_plot,'-','color',[color_map(colorCode,:),0.5],'markersize',5,'LineWidth',1.5);
+    plot(x_plot,y_plot,'-','color',[myColors(colorCode,:),0.5],'markersize',5,'LineWidth',1.5);
     
 
 end
 hold off;
-colormap(color_map);
+colormap(myColors);
 %c = colorbar('Ticks',0:0.5:1,'TickLabels', round((linspace(cmin,cmax,3)),c_digit));
 c = colorbar;
 set(c,'TickLabels',{'700','1380','2060','2740','3420','4100'});
@@ -960,6 +966,9 @@ ylabel('Normalized ERK')
 
 set(gca,'XDir','reverse')
 config_plot(f,c);
+
+saveas(f,['/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/f_u_timeave_rolling_colorByLamp_withFit.png']);
+
 
 %% Supp. Fig. 3F
 % f(u) on timeave matrix, aggregate single nuclei first - subtract later - color by time

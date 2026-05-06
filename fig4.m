@@ -151,14 +151,18 @@ end
 
 % plot LOF f(u) - color by Lamp - only use data for first 14 dpa
 
+tLevels = 101;
+myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(myColors);                  % Apply it to the FIGURE
+
 
 g = figure;
 
-b = errorbar(mean(bin_x_1amp,2),nanmean(bin_y_1amp,2),(nanstd(bin_y_1amp,0,2)./sqrt(size(bin_y_1amp,2))),'-','color',[0.9966 0.8899 0.8395],'markersize',10,'LineWidth',4); hold on;
-c = errorbar(mean(bin_x_2amp,2),nanmean(bin_y_2amp,2),(nanstd(bin_y_2amp,0,2)./sqrt(size(bin_y_2amp,2))),'-','color',[0.9884 0.6262 0.5059],'markersize',10,'LineWidth',4);
-d = errorbar(mean(bin_x_3amp,2),nanmean(bin_y_3amp,2),(nanstd(bin_y_3amp,0,2)./sqrt(size(bin_y_3amp,2))),'-','color',[0.9746 0.3327 0.2330],'markersize',10,'LineWidth',4);
-e = errorbar(mean(bin_x_4amp,2),nanmean(bin_y_4amp,2),(nanstd(bin_y_4amp,0,2)./sqrt(size(bin_y_4amp,2))),'-','color',[0.7664 0.0711 0.1052],'markersize',10,'LineWidth',4);
-f = errorbar(mean(bin_x_5amp,2),nanmean(bin_y_5amp,2),(nanstd(bin_y_5amp,0,2)./sqrt(size(bin_y_5amp,2))),'-','color',[0.4039 0 0.0510],'markersize',10,'LineWidth',4);
+b = errorbar(mean(bin_x_1amp,2),nanmean(bin_y_1amp,2),(nanstd(bin_y_1amp,0,2)./sqrt(size(bin_y_1amp,2))),'-','color',myColors(1,:),'markersize',10,'LineWidth',4); hold on;
+c = errorbar(mean(bin_x_2amp,2),nanmean(bin_y_2amp,2),(nanstd(bin_y_2amp,0,2)./sqrt(size(bin_y_2amp,2))),'-','color',myColors(26,:),'markersize',10,'LineWidth',4);
+d = errorbar(mean(bin_x_3amp,2),nanmean(bin_y_3amp,2),(nanstd(bin_y_3amp,0,2)./sqrt(size(bin_y_3amp,2))),'-','color',myColors(51,:),'markersize',10,'LineWidth',4);
+e = errorbar(mean(bin_x_4amp,2),nanmean(bin_y_4amp,2),(nanstd(bin_y_4amp,0,2)./sqrt(size(bin_y_4amp,2))),'-','color',myColors(76,:),'markersize',10,'LineWidth',4);
+f = errorbar(mean(bin_x_5amp,2),nanmean(bin_y_5amp,2),(nanstd(bin_y_5amp,0,2)./sqrt(size(bin_y_5amp,2))),'-','color',myColors(101,:),'markersize',10,'LineWidth',4);
 a = errorbar([0.05:0.1:0.95]',nanmean(bin_y_allAmp,2),nanstd(bin_y_allAmp,0,2)./sqrt(size(bin_y_allAmp,2)),'-','color','k','markersize',10,'LineWidth',4); 
 hold off;
 
@@ -178,6 +182,8 @@ legend([a,b,c,d,e,f], legend_name,...
 
 set(gca,'XDir','reverse','fontsize',16)
 
+saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Fig4E.png');
+
 
 %% Fig. 4F
 
@@ -188,9 +194,12 @@ set(gca,'XDir','reverse','fontsize',16)
 
 %set up colors
 tLevels = 12;
-brew = cbrewer2('Reds',tLevels);
+%%%brew = cbrewer2('Reds',tLevels);
+%%%tLevels = 101;
+myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(myColors);                  % Apply it to the FIGURE
 %color_map=colormap(cbrewer2('Reds',tLevels));
-color_map=colormap(brew(2:12,:));
+%%%color_map=colormap(brew(2:12,:));
 LampMin = 1500;
 LampMax = 10900;
 close;
@@ -270,7 +279,8 @@ hold on;
 
             colorCode = round((((LampHere-LampMin)./LampMax)).*10);
 
-            cl = color_map(colorCode+1,:);
+            %cl = color_map(colorCode+1,:);
+            cl = myColors(colorCode+1,:);
 
             cl = horzcat(cl,0.5);
 
@@ -296,14 +306,17 @@ xlim([0,2]);
 legend('off');
 
 
-color_map=colormap(brew(2:12,:));
+%color_map=colormap(brew(2:12,:));
 
 
-
+colormap(myColors);                  % Apply it to the FIGURE
 g = colorbar;
 caxis([LampMin,LampMax]);
 
 g.Label.String = 'Length Amputated (\mum)';
+
+saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Fig4F.png');
+
 
 %% Fig. 4G
 
@@ -368,9 +381,11 @@ paths.plotFolder = '/Volumes/AshleyData2/29Jan23_lof_combined_24May23/plots';
 
 %set up colors
 tLevels = 12;
-brew = cbrewer2('Reds',tLevels);
+%%%brew = cbrewer2('Reds',tLevels);
 %color_map=colormap(cbrewer2('Reds',tLevels));
-color_map=colormap(brew(2:12,:));
+%%%color_map=colormap(brew(2:12,:));
+myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(myColors);                  % Apply it to the FIGURE
 LampMin = 1500;
 LampMax = 10900;
 close;
@@ -469,7 +484,7 @@ ydataFit = [];
 
             colorCode = round((((LampHere-LampMin)./LampMax)).*10);
 
-            cl = color_map(colorCode+1,:);
+            cl = myColors(colorCode+1,:);
 
             cl = horzcat(cl,0.5);
 
@@ -498,10 +513,10 @@ ylabel('Average ERK Activity (rescaled space,u)')
 config_plot(f);
 ylim([0,0.6]);
 
-color_map=colormap(brew(2:12,:));
+%color_map=colormap(brew(2:12,:));
 
 
-
+colormap(myColors);
 g = colorbar;
 caxis([LampMin,LampMax]);
 
@@ -510,4 +525,7 @@ g.Label.String = 'Length Amputated (\mum)';
 legend_name={strcat("R^2=",num2str(round(fit_gof.rsquare,1)))};
 legend([p_fit], legend_name,...
         'Location','northwest','color','none','box','off');
+
+saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Fig4G.png');
+
 

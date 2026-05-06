@@ -190,5 +190,8 @@ f = figure();
 [c,fit_obj,fit_obj_gof] = plot_Gx_by_Ex_noODR_red_3groups(analysis_mat,100,1); % use this line for figure in paper
 config_plot(f,c);
 
+saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Gu_by_Eu_TimeAverage_fixBinning.png');
+
+
 
 
