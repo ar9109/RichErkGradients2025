@@ -211,30 +211,20 @@ cdata = cdata(idx);
 f = figure();
 %cm = colormap(flipud(cool()));
 tLevels = 101;
-%color_map=colormap(cbrewer2('Reds',tLevels));
-%%%color_map=flipud(colormap(viridis(tLevels)));
-myColors = flipud(viridis(tLevels)); % Create the flipped matrix
-colormap(myColors);                  % Apply it to the FIGURE
-%%%color_map=flipud(color_map);
+color_map=colormap(cbrewer2('Reds',tLevels));
 lampMinHere = 706;
 lampMaxHere = 4053;
 colorCode = ((cdata-700)./3353).*100+1;
 
-scatter(xdata,ydata,50,myColors(round(colorCode),:),'filled',LineWidth=2)
+scatter(xdata,ydata,50,round(colorCode),'filled',LineWidth=2)
 %c = colorbar();
 % c = colorbar('Ticks',0:0.5:1,'TickLabels', (somerangeyoulike));
-%color_map=colormap(cbrewer2('Reds',tLevels));
-
-
-%color_map=flipud(colormap(viridis(tLevels)));
-%%%color_map=flipud(color_map);
-
+color_map=colormap(cbrewer2('Reds',tLevels));
 c = colorbar();
 %set(g,'TickLabels',{'0','811','1621','2432','3242','4053'});%,'2740','3080','3420','3760','4100'})
 %c = colorbar('Ticks',0:0.5:1,'TickLabels', (somerangeyoulike));
 %set(c,'Ticks',0:0.5:1,'TickLabels',{'700','1380','2060','2740','3420','4100'});
-%set(c,'Ticks',10:17:100,'TickLabels',{'700','1380','2060','2740','3420','4100'});
-set(c,'TickLabels',{'700','1380','2060','2740','3420','4100'});
+set(c,'Ticks',10:17:100,'TickLabels',{'700','1380','2060','2740','3420','4100'});
 c.Label.String = 'Length Amputated (um)';
 %c.Label.String = 'Lamp(\mum)';
 % c.Label.String = 'dpa';
@@ -251,14 +241,12 @@ legend_f.String{2} = 'y=x';
 config_plot(gcf,c)
 %ylabel('(dL/dt)/L (1/day)')
 ylabel('\DeltaLength/Length_{Reg} (1/day)')
-xlabel('Fraction Osteoblasts Cycling')
+xlabel('Fraction GEM+')
 xlim([0,1])
 ylim([0,1])
 
-saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/fig1I_changeLength_osteoblastCycling.png');
-
 %% Fig. 1j 
-%Plot sumGEM+ vs hpp
+% (Plot sumGEM+ vs hpp - from Alvin - modified by Ashley (to mess with) 18 Apr 23 Red - 3 groups 13 Feb 24 - changeFit)
 
 %load "para_mat_gem_merged" from "Fig1" folder
 
@@ -273,7 +261,7 @@ f = figure('visible','on');
 % xlim([0,Inf])
 xlim([36,336])
 ylim([0,600]);
-saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/sumGEM_vs_hpp_SS000001_noScale_13feb24_red_changeFit_timeOffset48.png');
+%saveas(f,[paths.plotFolder,filesep,'sumGEM_vs_hpp_SS000001_noScale_13feb24_red_changeFit_timeOffset48.png']);
 
 %% Fig. 1k
 % Plot FractionGEM+ vs Lreg/Lamp - Color Red - change fit - 3 groups
@@ -288,12 +276,11 @@ fx = @(s)s.Lr./s.L_amp;
 f = figure('visible','on');
 %plot_parameters_merged3_long_copy2(fx,fy,para_mat_gem_merged(1:end-5),'Fraction Regen. (Lreg/Lamp)','Fraction Proliferating (GEM+)')
 %%%[~,~,fit_b,fit_m] = plot_parameters_merged3_long_copy2(fx,fy,para_mat_gem_merged_copy(1:end),'Fraction Regen. (Lreg/Lamp)','Fraction Proliferating (GEM+)');
-[~,~,fit_b,fit_m] = plot_parameters_merged3_long_copy2_9Mar23_2newFit_3groupsV2(fx,fy,para_mat_gem_merged_copy(1:end),'Fraction Regen. (Lreg/Lamp)','Fraction Osteoblasts Cycling');
+[~,~,fit_b,fit_m] = plot_parameters_merged3_long_copy2_9Mar23_2newFit_3groups(fx,fy,para_mat_gem_merged_copy(1:end),'Fraction Regen. (Lreg/Lamp)','Fraction Osteoblasts Cycling');
 % xlim([0,Inf])
 xlim([0,1.2])
 ylim([0,0.8]);
-%saveas(f,[paths.plotFolder,filesep,'FractionGEM_vs_LregByLamp_definedFit_red2_updateFit2_3colors2.png']);
-saveas(f,['/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/FractionGEM_vs_LregByLamp_definedFit_red2_updateFit2_3colors2.png']);
+saveas(f,[paths.plotFolder,filesep,'FractionGEM_vs_LregByLamp_definedFit_red2_updateFit2_3colors2.png']);
 
 
 %% Fig. 1l
@@ -378,9 +365,7 @@ end
 
 %set up color map
 tLevels = 101;
-%color_map=colormap(cbrewer2('Reds',tLevels));
-myColors = flipud(viridis(tLevels)); % Create the flipped matrix
-colormap(myColors);                  % Apply it to the FIGURE
+color_map=colormap(cbrewer2('Reds',tLevels));
 lampMinHere = 706;
 lampMaxHere = 4053;
 
@@ -391,11 +376,11 @@ BuildLambdaCollectHere = vertcat(BuildLambdaCollectMed, BuildLambdaCollectLat);
 
 % Plot lambda/LengthRegen. v. Frac. Regen.
 
-f = figure;
+figure;
 
 for m = 1:size(BuildLambdaCollectHere,1)
     colorCode = ((BuildLambdaCollectHere(m,6)-706)./3353).*100+1; %%% 699 will need to be edited 
-    plot((BuildLambdaCollectHere(m,5)./BuildLambdaCollectHere(m,6)),(BuildLambdaCollectHere(m,4)./BuildLambdaCollectHere(m,5)),'.','MarkerSize',20,'Color',myColors((round(colorCode)),:)); hold on;        
+    plot((BuildLambdaCollectHere(m,5)./BuildLambdaCollectHere(m,6)),(BuildLambdaCollectHere(m,4)./BuildLambdaCollectHere(m,5)),'.','MarkerSize',20,'Color',color_map((round(colorCode)),:)); hold on;        
 end
 
 %fit all data
@@ -444,13 +429,13 @@ fit_plot = plot(ft);
 set(fit_plot,'linewidth',2,'color','k'); hold on;
 
 fit_plot_lar = plot(ft_lar);
-set(fit_plot_lar,'linewidth',2,'color',myColors(101,:));
+set(fit_plot_lar,'linewidth',2,'color',[0.5 0 0]);
 
 fit_plot_med = plot(ft_med);
-set(fit_plot_med,'linewidth',2,'color',myColors(68,:));
+set(fit_plot_med,'linewidth',2,'color',[1 0 0]);
 
 fit_plot_small = plot(ft_small);
-set(fit_plot_small,'linewidth',2,'color',myColors(34,:));
+set(fit_plot_small,'linewidth',2,'color',[1 0.5 0.5]);
 
 %scale plot
 xlabel('Fraction Regenerated');
@@ -466,6 +451,3 @@ legend_name={strcat("R^2 = ",num2str(gof_all.rsquare)),...
     strcat("R^2 = ",num2str(gof_small.rsquare))};
 legend([fit_plot,fit_plot_lar,fit_plot_med,fit_plot_small], legend_name,...
         'Location','best','color','none','box','off');
-
-saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/fig1L_lambda_fractionRegen.png');
-
