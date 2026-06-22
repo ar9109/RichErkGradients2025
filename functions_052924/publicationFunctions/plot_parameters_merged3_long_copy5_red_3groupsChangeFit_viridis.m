@@ -16,10 +16,11 @@ L_amp = [para_mat.L_amp];
 %f = figure('visible','on');
 %cm = colormap(flipud(cool(round(max(L_amp))-round(min(L_amp))+1)));%AR added flipud
 tLevels = 101;
-color_map=colormap(cbrewer2('Reds',tLevels));
+%color_map=colormap(cbrewer2('Reds',tLevels));
+color_map=colormap(viridis(tLevels)); %%%
+color_map=flipud(color_map); %%%
 lampMinHere = 706;
 lampMaxHere = 4053;
-
 
 
 fit_s=[];
@@ -93,6 +94,7 @@ end
         plot(fit_s(xxx,1),fit_s(xxx,2),'.','color',color_map(round(colorCode),:),'MarkerSize',20);hold on;
     end
     %%%endAshley
+    
     
 % % %     %collect_para_mat_m(idxs,:);
 % % %     %plot(fit_b(:,1),fit_b(:,2),'.','color','b','MarkerSize',20);hold on;

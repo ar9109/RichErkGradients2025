@@ -15,7 +15,9 @@ end
 L_amp = [para_mat.L_amp];
 
 tLevels = 101;
-color_map=colormap(cbrewer2('Reds',tLevels));
+%color_map=colormap(cbrewer2('Reds',tLevels));
+color_map=colormap(viridis(tLevels)); %%%
+color_map=flipud(color_map); %%%
 lampMinHere = 706;
 lampMaxHere = 4053;
 
@@ -140,13 +142,19 @@ if ~isempty(ft)
     set(fit_plot,'linewidth',2,'color','k');
 
     fit_plot_l = plot(fitresult_l);
-    set(fit_plot_l,'linewidth',2,'color',[0.5 0 0]);
+%    set(fit_plot_l,'linewidth',2,'color',[0.5 0 0]);
+    set(fit_plot_l,'linewidth',2,'color',color_map(101,:));%[0.5 0 0]
+
 
     fit_plot_m = plot(fitresult_m);
-    set(fit_plot_m,'linewidth',2,'color',[1 0 0]);
+%    set(fit_plot_m,'linewidth',2,'color',[1 0 0]);
+    set(fit_plot_m,'linewidth',2,'color',color_map(68,:));%[1 0 0]
+
 
     fit_plot_s = plot(fitresult_s);
-    set(fit_plot_s,'linewidth',2,'color',[1 0.5 0.5]);
+%    set(fit_plot_s,'linewidth',2,'color',[1 0.5 0.5]);
+    set(fit_plot_s,'linewidth',2,'color',color_map(34,:));%[1 0.5 0.5]
+
 end
 
 % axes spec
@@ -162,6 +170,10 @@ c.FontSize = 20;
 
 ax = gca;
 ax.YAxis.Exponent = 0;
+
+%color_map=colormap(magma(tLevels)); %%%
+%color_map=flipud(color_map); %%%
+colormap(color_map);
 
 g = colorbar;
 %set(g,'TickLabels',{'0','811','1621','2432','3242','4053'});%,'2740','3080','3420','3760','4100'})

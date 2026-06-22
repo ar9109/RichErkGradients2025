@@ -255,7 +255,7 @@ xlabel('Fraction Osteoblasts Cycling')
 xlim([0,1])
 ylim([0,1])
 
-saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/fig1I_changeLength_osteoblastCycling.png');
+%saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/fig1I_changeLength_osteoblastCycling.png');
 
 %% Fig. 1j 
 %Plot sumGEM+ vs hpp
@@ -269,11 +269,11 @@ fy = @(s)((s.sumnucleiGEM));
 fx = @(s)s.hppTrue;
 f = figure('visible','on');
 %plot_parameters_merged3_long_copy2(fx,fy,para_mat_gem_merged(1:end-5),'Fraction Regen. (Lreg/Lamp)','Fraction Proliferating (GEM+)')
-[~,~,fit_l,fit_m] = plot_parameters_merged3_long_copy5_red_3groupsChangeFit(fx,fy,para_mat_gem_merged_copy(1:end),'Time (hours post amputation)','# Osteoblasts Cycling');
+[~,~,fit_l,fit_m] = plot_parameters_merged3_long_copy5_red_3groupsChangeFit_viridis(fx,fy,para_mat_gem_merged_copy(1:end),'Time (hours post amputation)','# Osteoblasts Cycling');
 % xlim([0,Inf])
 xlim([36,336])
 ylim([0,600]);
-saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/sumGEM_vs_hpp_SS000001_noScale_13feb24_red_changeFit_timeOffset48.png');
+%saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/sumGEM_vs_hpp_SS000001_noScale_13feb24_red_changeFit_timeOffset48.png');
 
 %% Fig. 1k
 % Plot FractionGEM+ vs Lreg/Lamp - Color Red - change fit - 3 groups
@@ -293,7 +293,7 @@ f = figure('visible','on');
 xlim([0,1.2])
 ylim([0,0.8]);
 %saveas(f,[paths.plotFolder,filesep,'FractionGEM_vs_LregByLamp_definedFit_red2_updateFit2_3colors2.png']);
-saveas(f,['/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/FractionGEM_vs_LregByLamp_definedFit_red2_updateFit2_3colors2.png']);
+%saveas(f,['/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/FractionGEM_vs_LregByLamp_definedFit_red2_updateFit2_3colors2.png']);
 
 
 %% Fig. 1l
