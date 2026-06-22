@@ -24,7 +24,10 @@ bin_y = [];
 %%%color_unit = (1-0)./color_res; % config color
 
 tLevels = 101;
-color_map=colormap(cbrewer2('Reds',tLevels));
+%color_map=colormap(cbrewer2('Reds',tLevels));
+%color_map=colormap(viridis(tLevels));
+myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(myColors);                  % Apply it to the FIGURE
 lampMinHere = 706;
 lampMaxHere = 4053;
 
@@ -69,7 +72,8 @@ for i = numel(analysis_mat):-1:1
 %     x_plot = x_plot(s.binvalue>=s.lambda);
 %     y_plot = y_plot(s.binvalue>=s.lambda);
 
-    colorPlot = color_map((round(cl)),:);
+    %colorPlot = color_map((round(cl)),:);
+    colorPlot = myColors((round(cl)),:);
     colorPlot = horzcat(colorPlot,0.5);
 
     plot(x_plot-0.8,y_plot,'.','color',colorPlot,'markersize',10);hold on;
@@ -85,7 +89,7 @@ end
 % % % % %     c.FontSize = 24;
 % % % % % %     c.Ruler.TickLabelFormat = '%.1e';
 
-color_map=colormap(cbrewer2('Reds',tLevels));
+%color_map=colormap(cbrewer2('Reds',tLevels));
 c = colorbar;
 %set(g,'TickLabels',{'0','811','1621','2432','3242','4053'});%,'2740','3080','3420','3760','4100'})
 set(c,'TickLabels',{'700','1380','2060','2740','3420','4100'});
@@ -130,9 +134,9 @@ cl0 = lines(30);
 %errorbar(binned.x-0.8,binned.y,binned.sem,'-o','color',cl0(1,:),'linewidth',2,'CapSize',10)
 %errorbar(binned.x-0.8,binned.y,binned.sem,'-o','color','k','linewidth',2,'CapSize',10)
 
-errorbar(binned.xSmall-0.8,binned.ySmall,binned.semSmall,'-o','color',[1 0.5 0.5],'linewidth',3,'CapSize',10); hold on;
-errorbar(binned.xMed-0.8,binned.yMed,binned.semMed,'-o','color',[1 0 0],'linewidth',3,'CapSize',10)
-errorbar(binned.xLar-0.8,binned.yLar,binned.semLar,'-o','color',[0.5 0 0],'linewidth',3,'CapSize',10)
+errorbar(binned.xSmall-0.8,binned.ySmall,binned.semSmall,'-o','color',myColors(34,:),'linewidth',3,'CapSize',10); hold on;
+errorbar(binned.xMed-0.8,binned.yMed,binned.semMed,'-o','color',myColors(68,:),'linewidth',3,'CapSize',10)
+errorbar(binned.xLar-0.8,binned.yLar,binned.semLar,'-o','color',myColors(101,:),'linewidth',3,'CapSize',10)
 errorbar(binned.x-0.8,binned.y,binned.sem,'-o','color','k','linewidth',3,'CapSize',10); hold on;
 
 % fit with offset

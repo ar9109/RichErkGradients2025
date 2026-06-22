@@ -17,7 +17,7 @@ opts.VariableNames = ["Experiment", "Fish", "Ray", "Pre", "Post", "Treatment", "
 opts.VariableTypes = ["double", "double", "double", "double", "double", "double", "double", "double"];
 
 % Import the data
-MekInhibitionMeasurementCollection = readtable("/Users/ashleyrich/Documents/DiTaliaLab/Experiments/1_9_23_MekInhibition_Measurements_Collection/1_9_23_MekInhibition_Measurement_Collection.xlsx", opts, "UseExcel", false);
+MekInhibitionMeasurementCollection = readtable("/Users/ashleyrich/Documents/GitHub/RichErkGradients2025/Fig2/1_9_23_MekInhibition_Measurement_Collection.xlsx", opts, "UseExcel", false);
 mekData = MekInhibitionMeasurementCollection;
 
 %step2
@@ -112,7 +112,7 @@ opts.VariableNames = ["Experiment", "Fish", "Ray", "Pre", "Post", "Treatment", "
 opts.VariableTypes = ["double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double"];
 
 % Import the data
-MekInhibitionMeasurementCollection = readtable("/Users/ashleyrich/Documents/DiTaliaLab/Experiments/1_9_23_MekInhibition_Measurements_Collection/1_9_23_MekInhibition_Measurement_Collection.xlsx", opts, "UseExcel", false);
+MekInhibitionMeasurementCollection = readtable("/Users/ashleyrich/Documents/GitHub/RichErkGradients2025/Fig2/1_9_23_MekInhibition_Measurement_Collection.xlsx", opts, "UseExcel", false);
 
 clear opts
 mekData = MekInhibitionMeasurementCollection;
@@ -187,10 +187,10 @@ analysis_mat = analysis_mat_timeaverage;
 
 close all;
 f = figure();
-[c,fit_obj,fit_obj_gof] = plot_Gx_by_Ex_noODR_red_3groups(analysis_mat,100,1); % use this line for figure in paper
+[c,fit_obj,fit_obj_gof] = plot_Gx_by_Ex_noODR_red_3groups_viridis(analysis_mat,100,1); % use this line for figure in paper
 config_plot(f,c);
 
-saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Gu_by_Eu_TimeAverage_fixBinning.png');
+%saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Gu_by_Eu_TimeAverage_fixBinning.png');
 
 
 
