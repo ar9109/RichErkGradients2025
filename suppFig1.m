@@ -1,4 +1,102 @@
-%% Supp Fig 1a
+%% Supp Fig 1a - Break data apart by Lamp (small, medium, large)
+
+%load "lateralDataEarly", "lateralDataLate", "medialDataEarly", and "medialDataLate", 
+% "lateralDataEarly_lamp", "lateralDataLate_lamp", "medialDataEarly_lamp",
+% "medialDataLate_lamp" from "SuppFig1" folder
+
+paths=[];
+
+%Merge data together
+allData = horzcat(lateralDataEarly, lateralDataLate, medialDataEarly, medialDataLate);
+allData_lamp = horzcat(lateralDataEarly_lamp,lateralDataLate_lamp, medialDataEarly_lamp, medialDataLate_lamp);
+
+%Break data apart by Lamp values - be consistent with Fig 1
+
+smallData = [];
+mediumData = [];
+largeData = [];
+smallLamps = [];
+mediumLamps = [];
+largeLamps = [];
+timeDataNew = [0 7.5 12.5 23.5];
+
+for i = 1:size(allData_lamp,2)
+    if allData_lamp(1,i) < 1575
+        smallData = horzcat(smallData,allData(:,i));
+        smallLamps = horzcat(smallLamps,allData_lamp(1,i));
+
+    elseif allData_lamp(1,i) < 3089
+        mediumData = horzcat(mediumData,allData(:,i));
+        mediumLamps = horzcat(mediumLamps,allData_lamp(1,i));
+
+    else
+        largeData = horzcat(largeData,allData(:,i));
+        largeLamps = horzcat(largeLamps,allData_lamp(1,i));
+
+    end
+end
+
+%set up color map
+tLevels = 10;
+color_map=colormap(cbrewer2('Reds',tLevels));
+myColors = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(myColors);                  % Apply it to the FIGURE
+lampMinHere = 706;
+lampMaxHere = 4053;
+
+%figure;
+
+%errorbar(timeDataEarly-96, nanmean(lateralDataEarly,2),nanstd(lateralDataEarly,0,2)./sqrt(numel(lateralDataEarly)),'.','linewidth',4,'markersize',30,'color',[0.4039 0 0.0510]); hold on;
+%errorbar(timeDataEarly-96, nanmean(medialDataEarly,2),nanstd(medialDataEarly,0,2)./sqrt(numel(medialDataEarly)),'.','linewidth',4,'markersize',30,'color',[0.9897 0.4865 0.3549]); hold on;
+errorbar(timeDataNew, nanmean(smallData,2),nanstd(smallData,0,2)./sqrt(numel(smallData)),'.-','linewidth',2,'markersize',30,'color',myColors(3,:)); hold on; 
+errorbar(timeDataNew, nanmean(mediumData,2),nanstd(mediumData,0,2)./sqrt(numel(mediumData)),'.-','linewidth',2,'markersize',30,'color',myColors(6,:)); hold on; 
+errorbar(timeDataNew, nanmean(largeData,2),nanstd(largeData,0,2)./sqrt(numel(largeData)),'.-','linewidth',2,'markersize',30,'color',myColors(9,:)); hold on; 
+
+
+%errorbar(timeDataLate-192, nanmean(lateralDataLate,2),nanstd(lateralDataLate,0,2)./sqrt(numel(lateralDataLate)),'x','linewidth',4,'markersize',15,'color',[0.4039 0 0.0510]); hold on;
+%errorbar(timeDataLate-192, nanmean(medialDataLate,2),nanstd(medialDataLate,0,2)./sqrt(numel(medialDataLate)),'x','linewidth',4,'markersize',15,'color',[0.9897 0.4865 0.3549]); hold on;
+%errorbar(timeDataLate-192, nanmean(LateData,2),nanstd(LateData,0,2)./sqrt(numel(LateData)),'.-','linewidth',2,'markersize',30,'color',color_map(5,:)); hold on;
+
+% Set up fittype and options.
+ft = fittype( 'a*exp(-b*x)', 'independent', 'x', 'dependent', 'y' );
+opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
+opts.Display = 'Off';
+%opts.StartPoint = [0.196595250431208 0.251083857976031];
+% Fit model to data.
+% [fitresult_latEarly, gof_latEarly] = fit((timeDataEarly-96)', nanmean(lateralDataEarly,2), ft, opts );
+% [fitresult_medEarly, gof_medEarly] = fit((timeDataEarly-96)', nanmean(medialDataEarly,2), ft, opts );
+% [fitresult_latLate, gof_latLate] = fit((timeDataLate-192)', nanmean(lateralDataLate,2), ft, opts );
+% [fitresult_medLate, gof_medLate] = fit((timeDataLate-192)', nanmean(medialDataLate,2), ft, opts );
+[fitresult_Small, gof_Small] = fit((timeDataNew)', nanmean(smallData,2), ft, opts );
+[fitresult_Med, gof_Med] = fit((timeDataNew)', nanmean(mediumData,2), ft, opts );
+[fitresult_Large, gof_Large] = fit((timeDataNew)', nanmean(largeData,2), ft, opts );
+
+
+% a = plot(fitresult_latEarly);
+% set(a,'linestyle','-','linewidth',2,'color',[0.4039 0 0.0510]);
+% b = plot(fitresult_medEarly);
+% set(b,'linestyle','-','linewidth',2,'color',[0.9897 0.4865 0.3549]);
+% c= plot(fitresult_latLate);
+% set(c,'linestyle','--','linewidth',2,'color',[0.4039 0 0.0510]);
+% d = plot(fitresult_medLate);
+% set(d,'linestyle','--','linewidth',2,'color',[0.9897 0.4865 0.3549]);
+e = plot(fitresult_Small);
+set(e,'linestyle','--','linewidth',2,'color',myColors(3,:));
+f = plot(fitresult_Med);
+set(f,'linestyle','--','linewidth',2,'color',myColors(6,:));
+g = plot(fitresult_Large);
+set(g,'linestyle','--','linewidth',2,'color',myColors(9,:));
+
+set(gca, 'fontsize',16);
+xlabel('Time Post Inhibition (hours)');
+ylabel('Average Fraction Proliferating');
+xlim([0,24]);
+
+legend('Small (1250-1574 \mum, n=2)','Medium (1575-3088 \mum, n=8)','Large (3089-4275 \mum, n=6)');
+
+%saveas(gcf,['/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/PointByPointFigures/extDataFig1A_sepByLamp2.jpg'])
+
+%% Supp Fig 1b - Break data apart by time: early (4dpa) and late (8dpa)
 
 %load "timeDataEarly", "timeDataLate", "lateralDataEarly",
 %"lateralDataLate", "medialDataEarly", and "medialDataLate" from "SuppFig1"
@@ -10,13 +108,22 @@ paths=[];
 % paths.masterFolder='/Volumes/AshleyData2/23Jan23_CombineCellCycleData/'; %folder where data is stored
 % paths.outFolder=   [paths.masterFolder 'figures/']; % output folder quantifications
 
-figure;
+EarlyData = horzcat(lateralDataEarly,medialDataEarly);
+LateData = horzcat(lateralDataLate,medialDataLate);
 
-errorbar(timeDataEarly-96, nanmean(lateralDataEarly,2),nanstd(lateralDataEarly,0,2)./sqrt(numel(lateralDataEarly)),'.','linewidth',4,'markersize',30,'color',[0.4039 0 0.0510]); hold on;
-errorbar(timeDataEarly-96, nanmean(medialDataEarly,2),nanstd(medialDataEarly,0,2)./sqrt(numel(medialDataEarly)),'.','linewidth',4,'markersize',30,'color',[0.9897 0.4865 0.3549]); hold on;
+%set up color map
+tLevels = 5;
+color_map=colormap(cbrewer2('Purples',tLevels));
 
-errorbar(timeDataLate-192, nanmean(lateralDataLate,2),nanstd(lateralDataLate,0,2)./sqrt(numel(lateralDataLate)),'x','linewidth',4,'markersize',15,'color',[0.4039 0 0.0510]); hold on;
-errorbar(timeDataLate-192, nanmean(medialDataLate,2),nanstd(medialDataLate,0,2)./sqrt(numel(medialDataLate)),'x','linewidth',4,'markersize',15,'color',[0.9897 0.4865 0.3549]); hold on;
+%figure;
+
+%errorbar(timeDataEarly-96, nanmean(lateralDataEarly,2),nanstd(lateralDataEarly,0,2)./sqrt(numel(lateralDataEarly)),'.','linewidth',4,'markersize',30,'color',[0.4039 0 0.0510]); hold on;
+%errorbar(timeDataEarly-96, nanmean(medialDataEarly,2),nanstd(medialDataEarly,0,2)./sqrt(numel(medialDataEarly)),'.','linewidth',4,'markersize',30,'color',[0.9897 0.4865 0.3549]); hold on;
+errorbar(timeDataEarly-96, nanmean(EarlyData,2),nanstd(EarlyData,0,2)./sqrt(numel(EarlyData)),'.-','linewidth',2,'markersize',30,'color',color_map(2,:)); hold on; 
+
+%errorbar(timeDataLate-192, nanmean(lateralDataLate,2),nanstd(lateralDataLate,0,2)./sqrt(numel(lateralDataLate)),'x','linewidth',4,'markersize',15,'color',[0.4039 0 0.0510]); hold on;
+%errorbar(timeDataLate-192, nanmean(medialDataLate,2),nanstd(medialDataLate,0,2)./sqrt(numel(medialDataLate)),'x','linewidth',4,'markersize',15,'color',[0.9897 0.4865 0.3549]); hold on;
+errorbar(timeDataLate-192, nanmean(LateData,2),nanstd(LateData,0,2)./sqrt(numel(LateData)),'.-','linewidth',2,'markersize',30,'color',color_map(5,:)); hold on;
 
 
 
@@ -26,26 +133,36 @@ opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
 opts.Display = 'Off';
 %opts.StartPoint = [0.196595250431208 0.251083857976031];
 % Fit model to data.
-[fitresult_latEarly, gof_latEarly] = fit((timeDataEarly-96)', nanmean(lateralDataEarly,2), ft, opts );
-[fitresult_medEarly, gof_medEarly] = fit((timeDataEarly-96)', nanmean(medialDataEarly,2), ft, opts );
-[fitresult_latLate, gof_latLate] = fit((timeDataLate-192)', nanmean(lateralDataLate,2), ft, opts );
-[fitresult_medLate, gof_medLate] = fit((timeDataLate-192)', nanmean(medialDataLate,2), ft, opts );
+% [fitresult_latEarly, gof_latEarly] = fit((timeDataEarly-96)', nanmean(lateralDataEarly,2), ft, opts );
+% [fitresult_medEarly, gof_medEarly] = fit((timeDataEarly-96)', nanmean(medialDataEarly,2), ft, opts );
+% [fitresult_latLate, gof_latLate] = fit((timeDataLate-192)', nanmean(lateralDataLate,2), ft, opts );
+% [fitresult_medLate, gof_medLate] = fit((timeDataLate-192)', nanmean(medialDataLate,2), ft, opts );
+[fitresult_Early, gof_Early] = fit((timeDataEarly-96)', nanmean(EarlyData,2), ft, opts );
+[fitresult_Late, gof_Late] = fit((timeDataLate-192)', nanmean(LateData,2), ft, opts );
 
-a = plot(fitresult_latEarly);
-set(a,'linestyle','-','linewidth',2,'color',[0.4039 0 0.0510]);
-b = plot(fitresult_medEarly);
-set(b,'linestyle','-','linewidth',2,'color',[0.9897 0.4865 0.3549]);
-c= plot(fitresult_latLate);
-set(c,'linestyle','--','linewidth',2,'color',[0.4039 0 0.0510]);
-d = plot(fitresult_medLate);
-set(d,'linestyle','--','linewidth',2,'color',[0.9897 0.4865 0.3549]);
+% a = plot(fitresult_latEarly);
+% set(a,'linestyle','-','linewidth',2,'color',[0.4039 0 0.0510]);
+% b = plot(fitresult_medEarly);
+% set(b,'linestyle','-','linewidth',2,'color',[0.9897 0.4865 0.3549]);
+% c= plot(fitresult_latLate);
+% set(c,'linestyle','--','linewidth',2,'color',[0.4039 0 0.0510]);
+% d = plot(fitresult_medLate);
+% set(d,'linestyle','--','linewidth',2,'color',[0.9897 0.4865 0.3549]);
+e = plot(fitresult_Early);
+set(e,'linestyle','--','linewidth',2,'color',color_map(2,:));
+f = plot(fitresult_Late);
+set(f,'linestyle','--','linewidth',2,'color',color_map(5,:));
 
 set(gca, 'fontsize',16);
 xlabel('Time Post Inhibition (hours)');
 ylabel('Average Fraction Proliferating');
 xlim([0,24]);
 
-legend('4dpa Lateral','4dpa Medial','8dpa Lateral','8dpa Medial');
+legend('Early (4dpa, n=8)','Late (8dpa, n=8)');
+
+%saveas(gcf,['/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/PointByPointFigures/extDataFig1A_sepByTime.jpg'])
+
+
 
 %% Supp Fig 1d
 % load analysis_mat_threshold.mat from "Supp Fig 1" folder

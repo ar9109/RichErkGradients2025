@@ -101,7 +101,7 @@ for fish = 1:55
     end
 end
 
-saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Lreg_v_Time_viridis.png');
+%saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Lreg_v_Time_viridis.png');
 
 %% Fig. 3c
 
@@ -232,7 +232,7 @@ g = colorbar;
 set(g,'TickLabels',{'700','1380','2060','2740','3420','4100'});
 g.Label.String = 'Length Amputated (um)';
 
-saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/mean_ktr_by_phi_adjustY_3groups.png');
+%saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/mean_ktr_by_phi_adjustY_3groups.png');
 
 
 %% Fig. 3D & 3E
@@ -421,8 +421,8 @@ legend_name={strcat("All Data (180)")...
 legend([aa,bb,cc,dd,ee,ff], legend_name,...
         'Location','northwest','color','none','box','off');
 
-saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/fu_subtractFirst_timeAverages_byLamp.png');
-saveas(g2,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/fu_subtractFirst_timeAverages_byTime.png');
+%saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/fu_subtractFirst_timeAverages_byLamp.png');
+%saveas(g2,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/fu_subtractFirst_timeAverages_byTime.png');
 
 
 %%  Fig. 3F
@@ -613,3 +613,206 @@ legend_name={
         strcat("phi > 0.9 (10)")};
 legend([bbb,ccc,ddd,eee,fff,ggg,hhh,iii,jjj,kkk], legend_name,...
         'Location','northeast','color','none','box','off');
+
+%% Fig 3G
+
+%load "longfin_tbl.mat" from "Fig3"
+
+longfin_tbl = longfin_tbl(~ismember(longfin_tbl.fish, [2,10]),[1:end]);
+longfin_tbl = longfin_tbl(~ismember(longfin_tbl.fish, [10]),[1:end]);
+wt_tbl = longfin_tbl(longfin_tbl.fish<=6,:);
+lf_tbl = longfin_tbl(longfin_tbl.fish>6,:);
+
+wt_tbl_bckup = wt_tbl;
+lf_tbl_bckup = lf_tbl;
+
+% build lagrangian matrix
+% set initial conditions
+
+time_dependent = 0;
+
+t0 = 72;
+phi0 = 0.115;
+% t0 = 96;
+% phi0 = 0.24;
+% t0 = 24;
+% phi0 = 0.025;
+
+xsize =100;
+
+
+
+% initialize
+lagr_mat = [];
+matHere = [];
+for i = 0:xsize
+    xi0 = i.*phi0./xsize;
+    
+    [t,y]=ode45(@(t,y)growthmodel_lagrangian(t,y,time_dependent),[t0:12:28*24],[phi0,xi0]); % y: 1st column is phi, 2nd is xi
+    % [t,y]=ode45(@growthmodel_lagrangian,ttall,[phi0,xi0]); % y: 1st column is phi, 2nd is xi
+
+
+    A0 = 0.35998; % A(phi)
+
+    % f(u) 
+    if time_dependent %from linear model Erk ~ 1 + phi_ + u:phi_ + phi_:dpa + u:phi_:dpa, averaged data
+    %     af = (0.16677+t./24.*0.034583)./A0; % f(u)
+    %     bf = (0.30788+t./24.*(-0.043484))./A0; % f(u)
+        af = (0.17355+t./24.*0.032759)./A0; % f(u)
+        bf = (0.32718+t./24.*(-0.023222))./A0; % f(u)
+    else
+        % af = 0.68059; % f(u)
+        % bf = 0.66059; % f(u)
+        af = 1.2; % f(u)
+        bf = 0.4; % f(u)
+    end
+
+
+    ERKi = A0.*(1-y(:,1)).*(af.*(y(:,2)./y(:,1))+bf);
+    
+    
+    % dydt = cell2mat(arrayfun(@(x,y)growthmodel_lagrangian(0,[x;y],time_dependent)',y(:,1),y(:,2),uni=0));
+    dydt = cell2mat(arrayfun(@(tt,x,y)growthmodel_lagrangian(tt,[x;y],time_dependent)',t,y(:,1),y(:,2),uni=0));
+
+    vi = dydt(:,2);
+    
+    
+    % append
+    matHere.t = t;
+    matHere.xi = y(:,2);
+    matHere.ERKi = ERKi;
+    matHere.dERKidt =gradient(ERKi,t);
+    matHere.ERKnormi = ERKi./ERKi(1);
+    matHere.logERKi = log(ERKi);
+    matHere.dlogERKidt = gradient(log(ERKi),t);
+%     matHere.dlogERKidt2 = matHere.dERKidt./ERKi;
+    matHere.vi = vi;
+    
+    matHere.i = i;
+    matHere.ui0 = i/xsize;
+    
+    lagr_mat = [lagr_mat,matHere];
+
+end
+[lagr_mat.ui] = expand_cell(arrayfun(@(s)s.xi./lagr_mat(end).xi,lagr_mat,uni=0));
+
+% compute dilusion via -rho*dv/dx
+t_array = lagr_mat(1).t;
+i_array = [lagr_mat.i];
+x_t_by_i = cat(2,lagr_mat.xi);
+v_t_by_i = cat(2,lagr_mat.vi);
+div_t_by_i = nan(size(x_t_by_i));
+for ti = 1:size(div_t_by_i,1)
+    div_t_by_i(ti,:) = gradient(v_t_by_i(ti,:),x_t_by_i(ti,:));
+end
+[lagr_mat.div_i] = expand_cell(num2cell(div_t_by_i,1)); % dv/dx
+[lagr_mat.dil_i] = expand_cell(arrayfun(@(s)-s.div_i.*s.ERKi,lagr_mat,uni=0)); % -rho*dv/dx
+
+% set up
+% build lagrangian matrix
+% set initial conditions
+
+time_dependent = 0;
+
+t0 = 72;
+phi0 = 0.115;
+% t0 = 96;
+% phi0 = 0.24;
+% t0 = 24;
+% phi0 = 0.025;
+
+
+%
+[t_wt,y_wt]=ode45(@(t,y)growthmodel_lagrangian(t,y,time_dependent),[t0:6:28*24],[phi0,phi0]); % y: 1st column is phi, 2nd is xi
+phi_wt = y_wt(:,end);
+
+alpha = 2.3981; a2  = 7.1977;
+
+
+% alpha = 1; a2  = 1.2367;
+% alpha = 2; a2  = 4.2968;
+% alpha = 3; a2  = 15.8853;
+% alpha = 4; a2  = 60.0677;
+
+% predict WT
+% In absolute scale, adjust color map
+
+Lamp = wt_tbl.AmountAmp.*(96000./157.545);
+%
+color_res = 100;
+color_code = Lamp;
+
+f = figure();
+hold on;
+cl0 = lines(10);
+cm = colormap(flipud(viridis(round(color_res)+1))); % config color
+color_unit = (round(max(color_code),-2)-round(min(color_code),-2))./color_res; % config color
+
+
+% two plots together
+% tile = tiledlayout(1,2);
+% ax1 = nexttile;
+% hold on;
+% ax2 = nexttile;
+% hold on;
+for i = 1:size(wt_tbl,1)
+        % create cropped myScale_merged struct
+        time = cat(2,cellfun(@(c)sscanf(c,'growth%ddpa'),wt_tbl.Properties.VariableNames(4:16)));
+        Lreg = wt_tbl{i,4:16}.*(96000./157.545); % 281.33/12.5*7
+        
+        
+        ydata = Lreg;
+        % ydata = Lreg./Lamp(i);
+        xdata = time;
+        ydata = adjust_neg(ydata);
+        
+        toberemoved = [xdata(:),ydata(:)];
+        removed = remove_nan_inf(toberemoved);
+        xdata = removed(:,1);
+        ydata = removed(:,2);
+
+
+        cl_idx = round((color_code(i)-min(color_code))./color_unit)+1;
+        if cl_idx <= 0
+            cl_idx = 1;
+        elseif cl_idx > round(color_res)
+            cl_idx = round(color_res);
+        end
+        cl = cm(cl_idx,:); % config color
+
+        hold on
+        plot(xdata,ydata,'o','color',[cl,1],'markersize',5,'LineWidth',1.5);
+
+
+        hold on;
+        xpred = t_wt./24;
+        ypred = phi_wt.*Lamp(i);
+        % ypred = phi_wt;
+        p_pred = plot(xpred,ypred,'-','color',[cl,1],'LineWidth',1.5);
+        
+end
+hold off;
+c = colorbar('Ticks',0:0.5:1,'TickLabels', round((linspace(min(color_code),max(color_code),3)),-2));
+c.Label.String = 'Length amputated (\mum)';
+
+% plot prediction
+
+ylim([0,5000])
+xlim([0,780])
+% xlim([0,75])
+xlim([0,30])
+
+% legend([p_pred],...
+%     {['R^2 = ', num2str(round(R2,2))]},...
+%     'Location','best','color','none','box','off')
+
+title(['alpha=' num2str(alpha) ',a2=' num2str(a2)])
+
+xlabel('Time (days post amputation)');
+ylabel('Length_{Regen.} (\mum)')
+config_plot(gcf,c)
+% save
+% savename = 'Lreg_by_time_prediction_wt';
+% savename = ['Lreg_by_time_prediction_wt_alpha' num2str(alpha)];
+% exportgraphics(f,[paths.plotFolder,filesep,savename, '.png']);
+% saveas(f,[paths.plotFolder,filesep, savename, '.fig']);

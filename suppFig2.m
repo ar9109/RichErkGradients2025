@@ -179,7 +179,7 @@ foKTR = fitoptions('Method','LinearLeastSquares',...
             %close figure 1;
             %close figure 3;
 
-            saveas(p,['/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/ExtDataFig2_fish' num2str(fishHere1) '_ray' num2str(rayHere1) '.png']);
+            %saveas(p,['/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/ExtDataFig2_fish' num2str(fishHere1) '_ray' num2str(rayHere1) '.png']);
           
 
 
@@ -274,7 +274,7 @@ for fish = 1:55
     end
 end
 
-saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/phi_v_time_viridis.png');
+%saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/phi_v_time_viridis.png');
 
 %% Supp. Fig. 2E
 % Average ERK by time color by Lamp
@@ -402,12 +402,12 @@ ylim([0,0.5]);
 saveas(f,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/mean_ktr_by_time_adjustY_3groups_viridis.png');
 
 
-%% Supp. Fig 2F & G - run next several blocks
+%% Supp. Fig 2F & G
 
 %load data from "31Oct22_LongfinTimecourse.xlsx" from "SuppFig2" folder
 %(see below)
 
-%% Set up the Import Options and import the data (supp. 2f&g cont.)
+% Set up the Import Options and import the data (supp. 2f&g cont.)
 opts = spreadsheetImportOptions("NumVariables", 45);
 
 % Specify sheet and range
@@ -419,15 +419,15 @@ opts.VariableNames = ["fish", "ray", "pre", "post", "AmountAmp", "VarName6", "Va
 opts.VariableTypes = ["double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double"];
 
 % Import the data
-growthData = readtable("/Users/ashleyrich/Documents/submissionCode/SuppFig2/31Oct22_LongfinTimecourse.xlsx", opts, "UseExcel", false);
+growthData = readtable("/Users/ashleyrich/Documents/GitHub/RichErkGradients2025/SuppFig2/31Oct22_LongfinTimecourse.xlsx", opts, "UseExcel", false);
 
-%% Convert to output type (supp. 2f & g cont.)
+% Convert to output type (supp. 2f & g cont.)
 growthData = table2array(growthData);
 
-%% Clear temporary variables (supp. 2f&g cont.)
+% Clear temporary variables (supp. 2f&g cont.)
 clear opts
 
-%% set up data matrix from imported data (supp. 2f&g cont.)
+% set up data matrix from imported data (supp. 2f&g cont.)
 selectData = growthData(:,[1,2,5,9,12,15,18,21,24,27,30,33,36,39, 42, 45]);
 
 selectDataAdjust = selectData(:,4:16)./selectData(:,3);
@@ -441,7 +441,7 @@ timePoints = [1,2,4,7,15,21,28,35,42,49,56, 64, 70];
 LampMeasurementsWT = LampMeasurements(1:36,:);
 
 
-%% collect fish & ray values from WT (supp. 2f&g cont.)
+% collect fish & ray values from WT (supp. 2f&g cont.)
 
 fishCollectWT = [];
 rayCollectWT = [];
@@ -457,7 +457,7 @@ uniqueFishWT = unique(fishCollectWT);
 uniqueRayWT = unique(rayCollectWT);
 
 
-%% collect values from WT data (sup. 2f&g cont.)
+% collect values from WT data (sup. 2f&g cont.)
 
 
 LampFinalWT = [];
@@ -504,9 +504,25 @@ for fishNum = 1:size(uniqueFishWT,1)
     end
 end
 
+% Plot - only WT (Extended Data Figure 2F)
+
+f = figure;
+
+plot(LampCollectWT,phiCollectWT,'.','MarkerSize',30,'color','k'); hold on;
+
+yline(1,'--');
+
+xlabel('Length Amputated (\mum)');
+ylabel('Fraction Regenerated');
+
+ylim([0 2]);
+xlim([1500,5000]);
+
+config_plot(f);
 
 
-%% Plot - only WT - box Plot 5 Sept 25 (supp. 2f cont.)
+
+% Plot - only WT - box Plot 5 Sept 25 (Extended Data Figure 2G)
 
 %subsetData
 lateralIdx = groupNameCol == 1;
@@ -528,7 +544,7 @@ latX2 = 1.8 + (2.2-1.8) * rand(1, size(phiLatWT,1));
 medX2 = 0.8 + (1.2-0.8) * rand(1, size(phiMedWT,1));
 
 
-close all;
+%close all;
 f = figure;
 
 b = boxchart(latX,phiLatWT);
@@ -574,19 +590,5 @@ text(0.87,1.2,txt2,'fontsize',16)
 % mkdir(paths.plotFolder);
 % saveas(f,[paths.plotFolder,filesep,'Lamp_v_PhiFinal_WTonly_boxPlot_flip.png']);
 
-%% Plot - only WT (sup. 2g cont.)
 
-f = figure;
-
-plot(LampCollectWT,phiCollectWT,'.','MarkerSize',30,'color','k'); hold on;
-
-yline(1,'--');
-
-xlabel('Length Amputated (\mum)');
-ylabel('Fraction Regenerated');
-
-ylim([0 2]);
-xlim([1500,5000]);
-
-config_plot(f);
 
