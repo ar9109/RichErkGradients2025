@@ -100,7 +100,7 @@ g = colorbar;
 caxis([LampMin,LampMax]);
 g.Label.String = 'Length Amputated (\mum)';
 
-saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Fig5B.png')
+%saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Fig5B.png')
 
 %% Generate Supp. Fig. 5C
 % Generate LOF timecourse plot
