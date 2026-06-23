@@ -182,7 +182,7 @@ legend([a,b,c,d,e,f], legend_name,...
 
 set(gca,'XDir','reverse','fontsize',16)
 
-saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Fig4E.png');
+%saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Fig4E.png');
 
 
 %% Fig. 4F
@@ -315,7 +315,7 @@ caxis([LampMin,LampMax]);
 
 g.Label.String = 'Length Amputated (\mum)';
 
-saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Fig4F.png');
+%saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Fig4F.png');
 
 
 %% Fig. 4G
@@ -526,6 +526,6 @@ legend_name={strcat("R^2=",num2str(round(fit_gof.rsquare,1)))};
 legend([p_fit], legend_name,...
         'Location','northwest','color','none','box','off');
 
-saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Fig4G.png');
+%saveas(g,'/Users/ashleyrich/Documents/DiTaliaLab/Manuscript/1_12_26_natPhysRevision/updatedFigurePanels/Fig4G.png');
 
 
