@@ -114,24 +114,47 @@ ylim([0,1.05])
 set(gca,'fontsize',16)
 
 %% Fig. 6D
+
 % This code generates # expressors v. Lamp for WT data set
 
-%load "fgf20a_exp1_2_allWTdata_Trim.mat" from "Fig6" folder
+%load "fgf20a_exp1_2_allWTdata_Trim.mat" and "dataWT.mat" from "Fig6" folder
+
+
+% fit is ALL (paper + new) data
+
+xTem = linspace(0,5000,100);
+yTem = linspace(0,5000,100);
 
 figure; plot(allWTnew(:,6),allWTnew(:,5),'.','MarkerSize',20,'color','k'); hold on;
+%plot(expData(:,6),expData(:,5),'.','MarkerSize',20,'color','m'); hold on;
+plot(dataWT(:,5),dataWT(:,4),'.','MarkerSize',20,'color','k'); hold on;
 
-xDataHere = allWTnew(:,6);
-yDataHere = allWTnew(:,5);
+%plot(xTem,yTem,'--','Color',[0.5 0.5 0.5],'LineWidth',2);
 
-%ft = fittype( 'a*x+0', 'independent', 'x', 'dependent', 'y' );
-ft = fittype( 'a*x+b', 'independent', 'x', 'dependent', 'y' );
+xDataHerePaper = vertcat(allWTnew(:,6));
+yDataHerePaper = vertcat(allWTnew(:,5));
+
+xDataHereNew = vertcat(dataWT(:,5));
+yDataHereNew = vertcat(dataWT(:,4));
+
+xDataHereAll = vertcat(allWTnew(:,6),dataWT(:,5));
+yDataHereAll = vertcat(allWTnew(:,5),dataWT(:,4));
+
+%fit combined data
+ftA = fittype( 'a*x+b', 'independent', 'x', 'dependent', 'y' );
+excludedPoints = yDataHereAll > 6000;
 opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
-[fitresult, gof] = fit( xDataHere, yDataHere, ft, opts );
+opts.Exclude = excludedPoints;
+[fitresultA, gofA] = fit( xDataHereAll, yDataHereAll, ftA, opts );
 
 %q = plot([0,6000],[0,6000],'--','color',[0.7 0.7 0.7],'lineWidth',2);
-h = plot((0:100:5000),fitresult(0:100:5000));
+%hP = plot((0:100:5000),fitresultP(0:100:5000));
+%hN = plot((0:100:5000),fitresultN(0:100:5000));
+hA = plot((1000:100:5000),fitresultA(1000:100:5000));
 %fit_plot_l = plot((0:2:350)+48,fitresult_l(0:2:350));
-set(h,'linestyle','-','linewidth',2,'color','k');
+%set(hP,'linestyle','-','linewidth',2,'color','k');
+%set(hN,'linestyle','-','linewidth',2,'color','c');
+set(hA,'linestyle','-','linewidth',2,'color','k');
 
 
 
@@ -140,16 +163,20 @@ xlabel('Length_{amp} (\mum)');
 xlim([0 6000]);
 ylim([0 6000]);
 
-legend_name={strcat("R^2 = ",num2str(round(gof.rsquare,1)))};%,...
+legend_name={strcat("R^2 = ",num2str(round(gofA.rsquare,4)))};%,...
     %strcat("y = x")};%,...
-    %strcat("R^2 = ", num2str(gof_s.rsquare))};
-legend([h], legend_name,...
+    %strcat("R^2 = ", num2str(round(gofN.rsquare,4)))
+    %strcat("R^2 = ", num2str(round(gofA.rsquare,4)))};
+%legend([hP,hN,hA], legend_name,...
+legend([hA], legend_name,...
     'Location','best','color','none','box','off');
 % legend([h,q], legend_name,...
 %     'Location','best','color','none','box','off');
     
 
 set(gca,'fontsize',16);
+
+%"GFPplus_lamp.jpg"
 
 %% Fig. 6E
 
@@ -186,246 +213,150 @@ ylim([0,0.3])
 xlim([0,12])
 
 %% Fig. 6F
+% Plot lamp v. #exp - old & new LOF data
+% fit is ALL (paper + new) WT data
 
-% load "fgf20a_exp1_2_allWTdata_Trim.mat" and "fgf20a_exp2_allLOFdata.mat"
-% from "Fig6" folder
+%load "fgf20a_exp1_2_allWTdata_Trim.mat" and "dataWT.mat" from "Fig6" folder
+%load "fgf20a_exp2_allLOFdata.mat" and "dataLOF.mat" from "Fig6" folder
 
-% Subset Data into WTlat,med and LOF lat,med - Ashley use
+figure; plot(allWTnew(:,6),allWTnew(:,5),'.','MarkerSize',20,'color','k'); hold on;
+plot(dataWT(:,5),dataWT(:,4),'.','MarkerSize',20,'color','k','linewidth',2); hold on;
+plot(exp2DataLOFNew(:,6),exp2DataLOFNew(:,5),'.','MarkerSize',20,'color','r'); hold on;
+plot(dataLOF(:,5),dataLOF(:,4),'.','MarkerSize',20,'color','r','linewidth',2); hold on;
 
-%subsetLOF data
+xDataHerePaper = vertcat(allWTnew(:,6));
+yDataHerePaper = vertcat(allWTnew(:,5));
+xDataHereNew = vertcat(dataWT(:,5));
+yDataHereNew = vertcat(dataWT(:,4));
+xDataHereAll = vertcat(allWTnew(:,6),dataWT(:,5));
+yDataHereAll = vertcat(allWTnew(:,5),dataWT(:,4));
 
-LOFlat = [];
-LOFmed = [];
-for n = 1:size(exp2DataLOFNew)
-    if exp2DataLOFNew(n,3) < 4
-        LOFlat = vertcat(LOFlat,exp2DataLOFNew(n,:));
-    elseif exp2DataLOFNew(n,3) > 4
-        LOFmed = vertcat(LOFmed,exp2DataLOFNew(n,:));
-    end
-end
+xDataHereLOF = vertcat(dataLOF(:,5),exp2DataLOFNew(:,6));
+yDataHereLOF = vertcat(dataLOF(:,4),exp2DataLOFNew(:,5));
 
-%subsetWT data
+ftA = fittype( 'a*x+b', 'independent', 'x', 'dependent', 'y' );
+excludedPoints = yDataHereAll > 6000;
+opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
+opts.Exclude = excludedPoints;
+[fitresultA, gofA] = fit( xDataHereAll, yDataHereAll, ftA, opts );
 
-WTlat = [];
-WTmed = [];
-for n = 1:size(allWTnew)
-    if allWTnew(n,3) < 4 || allWTnew(n,3) > 10
-        WTlat = vertcat(WTlat,allWTnew(n,:));
-    elseif allWTnew(n,3) > 4
-        WTmed = vertcat(WTmed,allWTnew(n,:));
-    end
-end
+% ftLOF = fittype( 'a*x+b', 'independent', 'x', 'dependent', 'y' );
+% opts = fitoptions( 'Method', 'LinearLeastSquares' );
+% [fitresultLOF, gofLOF] = fit( xDataHereLOF, yDataHereLOF, ftLOF, opts );
 
-% Box plot 20a/Lamp data
+ftLOF2 = fittype( 'a*x+b', 'independent', 'x', 'dependent', 'y' );
+opts2 = fitoptions( 'Method', 'NonlinearLeastSquares' );
+opts2.Display = 'Off';
+opts2.Lower = [0.5945 124.1];
+opts2.StartPoint = [0.7895 714.3];
+opts2.Upper = [0.9845 1305];
+excludedPoints = yDataHereLOF > 6000;
+opts2.Exclude = excludedPoints;
+[fitresultLOF2, gofLOF2] = fit( xDataHereLOF, yDataHereLOF, ftLOF2, opts2 );
 
-Lamp_NumEx_WTlat = (WTlat(:,5))./WTlat(:,6);
-Lamp_NumEx_WTmed = (WTmed(:,5))./WTmed(:,6);
-Lamp_NumEx_LOFlat = (LOFlat(:,5))./LOFlat(:,6);
-Lamp_NumEx_LOFmed = (LOFmed(:,5))./LOFmed(:,6);
 
-WTlatLabel = zeros(size(Lamp_NumEx_WTlat));
-WTmedLabel = zeros(size(Lamp_NumEx_WTmed))+1;
-LOFlatLabel = zeros(size(Lamp_NumEx_LOFlat))+2;
-LOFmedLabel = zeros(size(Lamp_NumEx_LOFmed))+3;
-
-%box chart script
-xgroupData2 = vertcat(WTlatLabel,WTmedLabel,LOFlatLabel,LOFmedLabel);
-yData2 = vertcat(Lamp_NumEx_WTlat,Lamp_NumEx_WTmed,Lamp_NumEx_LOFlat,Lamp_NumEx_LOFmed);
-
-figure;
-b = boxchart(xgroupData2,yData2);
-b.BoxFaceColor = [0 0 0];
-b.BoxFaceAlpha = 0;
-%b.MarkerColor = 'k';
-b.MarkerColor = [1 1 1];
-hold on;
-
-%cHere = [0 0.4470 0.7410];
-scatter0 = [-.5 -.4 -.3 -.2 -.1 0 .1 .2 .3 .4 .5];
-scatter1 = [-.6 -.5 -.4 -.3 -.2 -.1 0 .1 .2 .3 .4 .5 .6 .7];
-scatter0 = scatter0./4;
-scatter1 = scatter1./4;
-
-scatter0 = linspace(-0.25,0.25,size(WTlatLabel,1));
-scatter1 = linspace(0.75,1.25,size(WTmedLabel,1));
-scatter2 = linspace(1.75,2.25,size(LOFlatLabel,1));
-scatter3 = linspace(2.75,3.25,size(LOFmedLabel,1));
-
-plot(scatter0,Lamp_NumEx_WTlat,'.','color',[0 0 0],'Markersize',20); hold on;
-plot(scatter1,Lamp_NumEx_WTmed,'.','color',[0 0 0],'Markersize',20); hold on;
-plot(scatter2,Lamp_NumEx_LOFlat,'.','color',[0.6350 0.0780 0.1840],'Markersize',20); hold on;
-plot(scatter3,Lamp_NumEx_LOFmed,'.','color',[0.6350 0.0780 0.1840],'Markersize',20); hold on;
-box on;
+hA = plot((1000:100:15000),fitresultA(1000:100:15000));
+set(hA,'linestyle','-','linewidth',2,'color','k');
+% hLOF2 = plot((1000:100:15000),fitresultLOF2(1000:100:15000));
+% set(hLOF2,'linestyle','-','linewidth',2,'color','r');
 
 
 
+ylabel('# Fgf20a Expressors');
+%ylabel('Length_{reg} (\mum)');
+xlabel('Length_{amp} (\mum)');
+%xlim([0 6000]);
+ylim([0 15000]);
 
+legend_name={strcat("R^2 = ",num2str(round(gofA.rsquare,4)))};%,...
+    %strcat("y = x")};%,...
+    %strcat("R^2 = ", num2str(gof2.rsquare))
+    %strcat("R^2 = ", num2str(gofLOF2.rsquare))};
+legend([hA], legend_name,...
+    'Location','best','color','none','box','off');
+% legend([h,q], legend_name,...
+%     'Location','best','color','none','box','off');
+    
 
-%Linf stats work
-[p2_WT_lat_med,h2_WT_lat_med,stats2_WT_lat_med] = ranksum(Lamp_NumEx_WTlat,Lamp_NumEx_WTmed); %p = 0.1255
-[p2_LOF_lat_med,h2_LOF_lat_med,stats2_LOF_lat_med] = ranksum(Lamp_NumEx_LOFlat,Lamp_NumEx_LOFmed); %p = 0.0095
-[p2_WTlat_LOFlat,h2_WTlat_LOFlat,stats2_WTlat_LOFlat] = ranksum(Lamp_NumEx_WTlat,Lamp_NumEx_LOFlat); %p = 0.0022
-[p2_WTmed_LOFmed,h2_WTmed_LOFmed,stats2_WTmed_LOFmed] = ranksum(Lamp_NumEx_WTmed,Lamp_NumEx_LOFmed); %p = 0.3277
+set(gca,'fontsize',16);
 
-plot([0,1],[2.3,2.3],'-','color','k','linewidth',1);
-%txt1 = ['{\it p=}' num2str(p2_WT_lat_med,'%.4f')];
-txt1 = ['{\it p=}' num2str(round(p2_WT_lat_med,1))];
-text(0.2,2.4,txt1,'fontsize',16,'color',[0 0 0])
+%"GFPplus_lamp_LOF_and_WT.jpg"
 
-plot([2,3],[2.3,2.3],'-','color','k','linewidth',1);
-%txt2 = ['{\it p=}' num2str(p2_LOF_lat_med,'%.4f')];
-txt2 = ['{\it p=}' num2str(round(p2_LOF_lat_med,3))];
-text(2.2,2.4,txt2,'fontsize',16,'color',[0 0 0])
-
-plot([0,2],[0.3,0.3],'-','color','k','linewidth',1);
-%txt3 = ['{\it p=}' num2str(p2_WTlat_LOFlat,'%.4f')];
-txt3 = ['{\it p=}' num2str(round(p2_WTlat_LOFlat,3))];
-text(0.5,0.24,txt3,'fontsize',16,'color','k')
-
-plot([1,3],[0.15,0.15],'-','color','k','linewidth',1);
-%txt3 = ['{\it p=}' num2str(p2_WTmed_LOFmed,'%.4f')];
-txt3 = ['{\it p=}' num2str(round(p2_WTmed_LOFmed,1))];
-text(1.5,0.09,txt3,'fontsize',16,'color','k')
-
-
-
-ylabel({'# fgf20a Expressors';'/ Length_{amp} (\mum)'})
-%xlim([-1,2]);
-ylim([0,2.5]);
-set(gca,'FontSize',18);
-
-ax = gca;
-ax.XTick = [0, 1, 2, 3];
-ax.XTickLabels = {'WT Lat.','WT Med.','LOF Lat.','LOF Med.'};
-xtickangle(60)
 
 %% Fig. 6G
 
-% load "fgf20a_exp1_2_allWTdata_Trim.mat" and "fgf20a_exp2_allLOFdata.mat"
-% from "Fig6" folder
+% Plot lreg v. #exp - new WT data (black) + new LOF data (red)
+% fit is ALL (paper + new) data
 
-% Subset Data into WTlat,med and LOF lat,med - Ashley use
+%load "dataLOF2.mat" and "dataWT2.mat" from "Fig6" folder
 
-%subsetLOF data
+%figure; plot(allWTnew(:,6),allWTnew(:,5),'.','MarkerSize',20,'color','k'); hold on;
+%plot(expData(:,6),expData(:,5),'.','MarkerSize',20,'color','m'); hold on;
+figure; plot(dataWT(:,4),dataWT(:,7),'.','MarkerSize',20,'color','k'); hold on;
+plot(dataLOF(:,4),dataLOF(:,7),'.','MarkerSize',20,'color','r'); hold on;
 
-LOFlat = [];
-LOFmed = [];
-for n = 1:size(exp2DataLOFNew)
-    if exp2DataLOFNew(n,3) < 4
-        LOFlat = vertcat(LOFlat,exp2DataLOFNew(n,:));
-    elseif exp2DataLOFNew(n,3) > 4
-        LOFmed = vertcat(LOFmed,exp2DataLOFNew(n,:));
-    end
-end
-
-%subsetWT data
-
-WTlat = [];
-WTmed = [];
-for n = 1:size(allWTnew)
-    if allWTnew(n,3) < 4 || allWTnew(n,3) > 10
-        WTlat = vertcat(WTlat,allWTnew(n,:));
-    elseif allWTnew(n,3) > 4
-        WTmed = vertcat(WTmed,allWTnew(n,:));
-    end
-end
-
-% Box plot 20a/Lreg & 20a/Linf data for LOF
-close all;
-Linf_NumEx_WTlat = (WTlat(:,5))./WTlat(:,7);
-Linf_NumEx_WTmed = (WTmed(:,5))./WTmed(:,7);
-Linf_NumEx_LOFlat = (LOFlat(:,5))./LOFlat(:,7);
-Linf_NumEx_LOFmed = (LOFmed(:,5))./LOFmed(:,7);
-
-Lamp_NumEx_WTlat = (WTlat(:,5))./WTlat(:,6);
-Lamp_NumEx_WTmed = (WTmed(:,5))./WTmed(:,6);
-Lamp_NumEx_LOFlat = (LOFlat(:,5))./LOFlat(:,6);
-Lamp_NumEx_LOFmed = (LOFmed(:,5))./LOFmed(:,6);
-
-%WTlatLabel = zeros(size(Linf_NumEx_WTlat));
-%WTmedLabel = zeros(size(Linf_NumEx_WTmed))+1;
-LOFlatLabel1 = zeros(size(Linf_NumEx_LOFlat));
-LOFmedLabel1 = zeros(size(Linf_NumEx_LOFmed))+1;
-LOFlatLabel2 = zeros(size(Linf_NumEx_LOFlat))+2;
-LOFmedLabel2 = zeros(size(Linf_NumEx_LOFmed))+3;
-
-%box chart script
-xgroupData = vertcat(LOFlatLabel1,LOFmedLabel1,LOFlatLabel2,LOFmedLabel2);
-%xgroupData = vertcat(WTlatLabel,WTmedLabel,LOFlatLabel,LOFmedLabel);
-%yData = vertcat(Linf_NumEx_WTlat,Linf_NumEx_WTmed,Linf_NumEx_LOFlat,Linf_NumEx_LOFmed);
-yData = vertcat(Lamp_NumEx_LOFlat,Lamp_NumEx_LOFmed,Linf_NumEx_LOFlat,Linf_NumEx_LOFmed);
-
-q = figure;
-
-left_color = [0.6350 0.0780 0.1840];
-right_color = [0.4940 0.1840 0.5560]; %purple
-right_color = [0.3010 0.7450 0.9330]; %blue
-right_color = [0 0.4470 0.7410]; %darker blue
-set(q,'defaultAxesColorOrder',[left_color; right_color]);
+%plot(xTem,yTem,'--','Color',[0.5 0.5 0.5],'LineWidth',2);
 
 
-yyaxis left
 
-b = boxchart(xgroupData,yData);
-b.BoxFaceColor = [0 0 0];
-b.BoxFaceAlpha = 0;
-%b.MarkerColor = 'k';
-b.MarkerColor = [1 1 1];
-hold on;
+xDataHere2 = vertcat(dataWT(:,4));
+yDataHere2 = vertcat(dataWT(:,7));
 
-%cHere = [0 0.4470 0.7410];
-scatter0 = [-.5 -.4 -.3 -.2 -.1 0 .1 .2 .3 .4 .5];
-scatter1 = [-.6 -.5 -.4 -.3 -.2 -.1 0 .1 .2 .3 .4 .5 .6 .7];
-scatter0 = scatter0./4;
-scatter1 = scatter1./4;
+% idx2 = ~isnan(yDataHere2);
+% xDataHere2 = xDataHere2(idx2);
+% yDataHere2 = yDataHere2(idx2);
 
-scatter0 = linspace(-0.25,0.25,size(LOFlatLabel1,1));
-scatter1 = linspace(0.75,1.25,size(LOFmedLabel1,1));
-scatter2 = linspace(1.75,2.25,size(LOFlatLabel2,1));
-scatter3 = linspace(2.75,3.25,size(LOFmedLabel2,1));
+xDataHereLOF = vertcat(dataLOF(:,4));
+yDataHereLOF = vertcat(dataLOF(:,7));
 
-plot(scatter0,Lamp_NumEx_LOFlat,'.','color',[0.6350 0.0780 0.1840],'Markersize',20); hold on;
-plot(scatter1,Lamp_NumEx_LOFmed,'.','color',[0.6350 0.0780 0.1840],'Markersize',20); hold on;
-plot(scatter2,Linf_NumEx_LOFlat,'.','color',right_color,'Markersize',20); hold on;
-plot(scatter3,Linf_NumEx_LOFmed,'.','color',right_color,'Markersize',20); hold on;
-box on;
+% idxLOF = ~isnan(yDataHereLOF);
+% xDataHereLOF = xDataHereLOF(idxLOF);
+% yDataHereLOF = yDataHereLOF(idxLOF);
 
-%Linf stats work
-[p_LOF_Lamp,h_LOF_Lamp,stats_LOF_Lamp] = ranksum(Lamp_NumEx_LOFlat,Lamp_NumEx_LOFmed); %p = 0.0695
-[p_LOF_Linf,h_LOF_Linf,stats_LOF_Linf] = ranksum(Linf_NumEx_LOFlat,Linf_NumEx_LOFmed); %p = 0.9143
-%[p_WTlat_LOFlat,h_WTlat_LOFlat,stats_WTlat_LOFlat] = ranksum(Linf_NumEx_WTlat,Linf_NumEx_LOFlat); %p = 0.0118
-%[p_WTmed_LOFmed,h_WTmed_LOFmed,stats_WTmed_LOFmed] = ranksum(Linf_NumEx_WTmed,Linf_NumEx_LOFmed); %p = 0.0176
 
-plot([0,1],[2.3,2.3],'-','color','k','linewidth',1);
-%txt1 = ['{\it p=}' num2str(p_LOF_Lamp,'%.4f')];
-txt1 = ['{\it p=}' num2str(round(p_LOF_Lamp,3))];
-text(0.2,2.4,txt1,'fontsize',16,'color',[0 0 0])
+%ft = fittype( 'a*x+0', 'independent', 'x', 'dependent', 'y' );
+ft = fittype( 'a*x+b', 'independent', 'x', 'dependent', 'y' );
+excludedPoints = xDataHere2 > 6000;
+opts = fitoptions( 'Method', 'LinearLeastSquares' );
+opts.Exclude = excludedPoints;
+[fitresult2, gof2] = fit( xDataHere2, yDataHere2, ft, opts );
 
-plot([2,3],[2.3,2.3],'-','color','k','linewidth',1);
-txt2 = ['{\it p=}' num2str(round(p_LOF_Linf,1))];
-text(2.2,2.4,txt2,'fontsize',16,'color',[0 0 0])
+ftLOF = fittype( 'a*x+b', 'independent', 'x', 'dependent', 'y' );
+opts = fitoptions( 'Method', 'LinearLeastSquares' );
+[fitresultLOF, gofLOF] = fit( xDataHereLOF, yDataHereLOF, ftLOF, opts );
+%[fitresult3, gof3] = fit( xDataHere3, yDataHere3, ft, opts );
 
-% plot([0,2],[3.45,3.45],'-','color','k','linewidth',1);
-% txt3 = ['{\it p=}' num2str(p_WTlat_LOFlat,'%.4f')];
-% text(0.5,3.55,txt3,'fontsize',16,'color','k')
-% 
-% plot([1,3],[3.75,3.75],'-','color','k','linewidth',1);
-% txt3 = ['{\it p=}' num2str(p_WTmed_LOFmed,'%.4f')];
-% text(1.5,3.85,txt3,'fontsize',16,'color','k')
+excludedPoints = xDataHereLOF > 6000;
 
-set(q,'defaultAxesColorOrder',[left_color; right_color]);
-ylabel({'# fgf20a Expressors /' ; 'Length_{amp}'})
-ylim([0,2.5])
 
-yyaxis right
-ylabel({'# fgf20a Expressors' ; 'Length_{reg} (\mum, Predicted)'})
-%xlim([-1,2]);
-%ylim([-60,120]);
-set(gca,'FontSize',18);
-set(q,'defaultAxesColorOrder',[left_color; right_color]);
 
-ax = gca;
-ax.XTick = [0, 1, 2, 3];
-ax.XTickLabels = {'LOF Lat.','LOF Med.','LOF Lat.','LOF Med.'};
-xtickangle(60)
-ylim([0,2.5]);
+
+%q = plot([0,6000],[0,6000],'--','color',[0.7 0.7 0.7],'lineWidth',2);
+%h1 = plot((0:100:5000),fitresult1(0:100:5000));
+h2 = plot((1000:100:5000),fitresult2(1000:100:5000));
+hLOF = plot((1000:100:6000),fitresultLOF(1000:100:6000));
+%h3 = plot((0:100:5000),fitresult3(0:100:5000));
+%fit_plot_l = plot((0:2:350)+48,fitresult_l(0:2:350));
+%set(h1,'linestyle','-','linewidth',2,'color','k');
+set(h2,'linestyle','-','linewidth',2,'color','k');
+set(hLOF,'linestyle','-','linewidth',2,'color','r');
+
+
+
+xlabel('# Fgf20a Expressors');
+ylabel('Length_{reg} (\mum)');
+%xlabel('Length_{amp} (\mum)');
+xlim([0 6000]);
+ylim([0 8000]);
+
+legend_name={strcat("R^2 = ",num2str(round(gof2.rsquare,1)))%};%,...
+    %strcat("y = x")};%,...
+    %strcat("R^2 = ", num2str(gof2.rsquare))
+    strcat("R^2 = ", num2str(round(gofLOF.rsquare,1)))};
+legend([h2,hLOF], legend_name,...
+    'Location','best','color','none','box','off');
+% legend([h,q], legend_name,...
+%     'Location','best','color','none','box','off');
+    
+
+set(gca,'fontsize',16);

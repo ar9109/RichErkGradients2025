@@ -113,8 +113,150 @@ ylabel('Difference in Avg. Erk Activity (Pre-Post)')
 xlabel('Position')
 set(gca,'fontsize',16)
 
-%% Supp. Fig. 6B
-%% Plot change in integrated density - use this one
+%% Supp. Figure 6B
+% load "collectDataNew.mat" from "SuppFig6" folder
+
+% load excel data
+
+% Set up the Import Options and import the data - import updated Lreg measurement data (only measure converted ray)
+opts = spreadsheetImportOptions("NumVariables", 17);
+
+% Specify sheet and range
+opts.Sheet = "Sheet1";
+opts.DataRange = "A3:Q14";
+
+% Specify column names and types
+opts.VariableNames = ["VarName1", "fish", "ray", "pre", "post", "Lamp", "Lamp_um", "convDay", "Lreg_conv", "phi_t0", "time_t0", "Lreg_t1", "phi_t1", "time_t1", "Lreg_t2", "phi_t2", "time_t2"];
+opts.VariableTypes = ["double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double"];
+
+% Import the data
+LampMeasurements19Mar26 = readtable("/Users/ashleyrich/Documents/GitHub/RichErkGradients2025/SuppFig6/LampMeasurements_19Mar26_updateLreg.xlsx", opts, "UseExcel", false);
+
+% Convert to output type
+LampData = table2array(LampMeasurements19Mar26);
+
+% Clear temporary variables
+clear opts
+
+% Fish list
+fishList = [1 3 4 6 7 8 9 10 11 12 16 163];
+
+% Use this to predict 27Mar26 - w/ adjustment - Ashley 9 April
+% Plot actual velocity as function of space v. predicted velo as func of
+% space
+% Adjust prediction for discrepancy between actual Lreg and predicted Lreg
+% - use single factor for all rays
+% normalize x values by lamp
+
+close all
+
+%set up color map
+%colorsHere = colormap(parula(size(fishList,2)));
+tLevels = 80;
+colorsHere = flipud(viridis(tLevels)); % Create the flipped matrix
+colormap(colorsHere);                  % Apply it to the FIGURE
+allPhis = LampData(:,10);
+allFish = LampData(:,2);
+[allPhiSort,sortIdx] = sort(allPhis);
+minPhi = min(allPhis);
+maxPhi = max(allPhis);
+
+
+
+for qq = 1:size(fishList,2)
+    fishNum = fishList(qq);
+
+    for cc = 1:size(LampData,1)
+        if LampData(cc,2) == fishNum
+        LregFish0 = LampData(cc,9);
+        LampFish0 = LampData(cc,7);
+        time0 = LampData(cc,11);
+        time1 = LampData(cc,14);
+        phi0 = LregFish0./LampFish0;
+        else
+            continue
+        end
+    end
+
+    baseFish = ['fish' num2str(fishNum)];
+
+    veloHere = collectDataNew.(baseFish).veloHere;
+    veloHere = horzcat(veloHere,0);
+    centroidLoc = collectDataNew.(baseFish).centroidLoc_toPlot;
+    centroidLoc = horzcat(centroidLoc,0);
+    
+        
+    % parameters
+    a1 = 0.05088; % dLdt/L vs total fractionGEM
+    % a2 = 7.06473694; % G(u) vs E(u)
+    a2 = 7.19766154; % G(u) vs E(u)
+    % alpha = 2.4097; % G(u) vs E(u)
+    alpha = 2.39807; % G(u) vs E(u)
+    A0 = 0.35998; % A(phi)
+    af = 1.2; % f(u)
+    bf = 0.4; % f(u)
+        
+    phi = LregFish0/LampFish0;
+    u=0:0.01:1;
+
+    %get prediction v from equations
+    for kk=1:length(phi)
+        u1=u*phi(kk);
+        v=a1*a2./(alpha+1)./af.*(A0.*(1-phi(kk))).^alpha.*phi.*((bf+af.*u).^(alpha+1)-bf^(alpha+1));
+        vSD=a1*a2./(alpha+1)./af.*(A0.*(1-phi(kk))).^alpha.*phi.*((bf+af.*1).^(alpha+1)-bf^(alpha+1));
+        v = v .* LampFish0; 
+        vSD = vSD .* LampFish0;
+
+        %alvin
+        Cf = 1/af*1/(alpha+1)*((af+bf)^(alpha+1)-bf^(alpha+1)); % integral of f(u)^alpha
+        gamma = a1*a2.*A0^alpha.*Cf; % lumped parameter
+        % alvin equations
+        dphidt = gamma.*(1-phi).^alpha.*phi;
+        dphidt = a1*a2.*A0^alpha.*(1-phi).^alpha.*phi.*1/af*1/(alpha+1)*((af+bf)^(alpha+1)-bf^(alpha+1));
+        dphidt = dphidt.*LampFish0;
+        %v is velocity/lamp
+        %v = v.*LampFish0;
+        u1 = u1.*LampFish0;
+        %v = dphidt;
+
+        vTipPre = dphidt;
+
+        adjFacNew = veloHere(1)./vTipPre;
+
+        for z = 1:size(allPhiSort)
+            if phi0 == allPhiSort(z)
+                colorNum = z;
+            else
+                continue
+            end
+        end
+
+        colorCode = round(phi*100);
+
+        
+        plot(u1./LampFish0,(v./LregFish0).*adjFacNew,'Color',colorsHere(colorCode,:),'LineWidth',1.5); hold on    
+    end
+    
+    %overlay actual data on prediction data
+    plot(centroidLoc./LampFish0,(veloHere./LregFish0),'o--','Color',colorsHere(colorCode,:),'LineWidth',2); hold on;
+
+end
+
+c = colorbar()
+c.Label.String = 'Fraction Regenerated';
+set( c, 'YDir', 'reverse' );
+
+%title('Normalize X by Lamp')
+ylabel('Velocity (\mum/hr) / L_{reg}')
+xlabel('Position (\mum)')
+set(gca,'fontsize',16)
+ylim([-0.005,0.055])
+xlim([0 0.8])
+
+%saveas(gcf,['/Users/ashleyrich/Documents/DiTaliaLab/Experiments_inProg/2Mar26_mEOSconversions/centriods/plots_veloPred_veloAct_9Apr26_adjustRayFactor_normVlreg_yLim_updateColors.jpg'])
+
+%% Supp. Fig. 6C
+% Plot change in integrated density - use this one
 
 close all
 figure;
