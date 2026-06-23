@@ -100,7 +100,7 @@ ax.XTickLabels = {'+DMSO','+BGJ'};
 %% Fig. 5C
 
 %load "analysis_mat_juneGEM.mat", "analysis_mat_Aug_mod.mat", and
-%"treatMat.mat" from "Fig5" folder
+%"treatMat2.mat" from "Fig5" folder
 
 % combine analysis mat.
 
@@ -630,130 +630,6 @@ legend_name={
         };
 legend([ccc,ddd,eee,fff,ggg,hhh,iii,jjj], legend_name,...
         'Location','northeast','color','none','box','off');
-
-%% Fig. 5h
-
-%% A(phi) color by Lamp - 3 groups
-
-E0 = 0.8;
-
-mean_ktr = arrayfun(@(x)mean(x.ktr(x.trim_logical)),analysis_mat);
-mean_ktr_bin = arrayfun(@(x)nanmean(x.averageKTR),analysis_mat);
-averageKTR_u_cell = arrayfun(@(s)...
-    bin_average(s.ccrot(s.trim_logical,1),...
-    adjust_neg(s.ktr(s.trim_logical)),10,0,s.L_reg),...
-    analysis_mat,'UniformOutput',false);
-
-mean_ktr_bin10_offsetE0 = cellfun(@nanmean,averageKTR_u_cell);
-
-L_reg = [analysis_mat.L_reg];
-%L_amp = [analysis_mat.L_amp];
-%phi = L_reg./[L_amp];
-ray = [analysis_mat.ray];
-fish = [analysis_mat.fish];
-time = [analysis_mat.hpa];
-
-ydata = mean_ktr-E0;
-
-%% generate treatment matrix
-
-treat = [];
-for i = 1:size(fish,2)
-    if fish(i) < 3 || fish(i) > 8
-        treatHere = 0;
-    else
-        treatHere = 1;
-    end
-    
-    treat = vertcat(treat,treatHere);
-end
-
-%% collect data of interest
-
-dataHere = horzcat(fish',time',ydata',treat);
-
-%%
-plotData = [];
-for fish = 1:10
-
-    for i = 1:size(dataHere,1)
-        if dataHere(i,1) == fish
-            treatVal = dataHere(i,4);
-            if dataHere(i,2) == 120
-                preERK = dataHere(i,3);
-            elseif dataHere(i,2) == 132
-                postERK = dataHere(i,3);
-            end
-
-        end
-
-    end
-    ERKhere = horzcat(preERK,postERK);
-    plotDataHere = horzcat(fish,treatVal,ERKhere);
-    plotData = vertcat(plotData,plotDataHere);
-
-end
-
-%%
-
-figure;
-
-conData = [];
-treatData = [];
-for i = 1:size(plotData)
-    if plotData(i,2) == 0
-        plot([0,12],[plotData(i,3),plotData(i,4)],'.-','color','k','linewidth',2); hold on;
-        conData = vertcat(conData,[plotData(i,3),plotData(i,4)]);
-    elseif plotData(i,2) == 1
-        plot([24,36],[plotData(i,3),plotData(i,4)],'.-','color','k','linewidth',2); hold on;
-        treatData = vertcat(treatData,[plotData(i,3),plotData(i,4)]);
-    end
-end
-
-%% plot average ERK - compare Pre - compare Post
-f=figure;
-
-meanCon = nanmean(conData);
-stdCon = nanstd(conData);
-semCon = stdCon./sqrt(size(conData,1));
-
-meanTreat = nanmean(treatData);
-stdTreat = nanstd(treatData);
-semTreat = stdTreat./sqrt(size(treatData,1));
-
-[h,p,ci,stats] = ttest2(conData(:,1),treatData(:,1));
-[h2,p2,ci2,stats2] = ttest2(conData(:,2),treatData(:,2));
-
-xgroupData = [1 1 1 1 2 2 2 2 2 2 3 3 3 3 4 4 4 4 4 4];
-yData = vertcat(conData(:,1),treatData(:,1),conData(:,2),treatData(:,2));
-
-b = boxchart(xgroupData,yData); hold on;
-b.BoxFaceColor = [0 0 0];
-b.BoxFaceAlpha = 0;
-%b.MarkerColor = 'k';
-b.MarkerColor = [1 1 1];
-hold on;
-box on;
-
-plot(linspace(0.8,1.2,4),[conData(:,1)],'.','color',[0 0.4470 0.7410],'markersize',20); hold on;
-plot(linspace(1.8,2.2,6),[treatData(:,1)],'.','color',[0 0.4470 0.7410],'markersize',20); hold on;
-plot(linspace(2.8,3.2,4),[conData(:,2)],'.','color',[0 0.4470 0.7410],'markersize',20); hold on;
-plot(linspace(3.8,4.2,6),[treatData(:,2)],'.','color',[0 0.4470 0.7410],'markersize',20); hold on;
-
-plot([1,2],[0.43,0.43],'-','linewidth',1,'color','k');
-%t = text(1.2,0.45,['\it \fontsize{16} p=' num2str(p)]);
-t = text(1.3,0.45,['\it \fontsize{16} p=' round(num2str(p,1))]);
-plot([3,4],[0.43,0.43],'-','linewidth',1,'color','k');
-%t = text(3.2,0.45,['\it \fontsize{16} p=' num2str(p2)]);
-t = text(3.3,0.45,['\it \fontsize{16} p=' round(num2str(p2,1))]);
-
-ylim([0,0.5]);
-%xlim([-1,4]);
-
-xticks([1 2 3 4])
-xticklabels({'Pre(+Water)','Pre(+Cyclohex.)','Post(+Water)','Post(+Cyclohex.)'})
-ylabel('Average ERK Activity (AU)');
-set(gca,'fontsize',16)
 
 %% Fig. 5H
 % plot average ERK - compare Pre - compare Post
