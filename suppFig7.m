@@ -4,13 +4,13 @@ chToResize = [1]; %reference channel to resize
 
 %paths.objFolder is located in "SuppFig7" folder under the name
 %"objects_old_22Apr24_new_copy_no0"
-%Please adjust the paths.masterFolder and paths.objFolder lines (12 & 13)
+%Please adjust the paths.masterFolder and paths.objFolder lines (13 & 14)
 %to where you store the data
 
 
 paths=[];
 
-paths.masterFolder='/Users/ashleyrich/Documents/submissionCode/SuppFig7/'; %folder where data is stored
+paths.masterFolder='/Users/ashleyrich/Documents/GitHub/RichErkGradients2025/SuppFig7/'; %folder where data is stored
 paths.objFolder= [paths.masterFolder 'objects_old_22Apr24_new_copy_no0/']; %objects folder
 
 fish=''; % put the number of the fish/scale/hpp to process or '' to choose them all
@@ -82,229 +82,113 @@ ylabel({'Length Fgf20a Expression Domain (\mum)'})
 set(gca,'fontsize',16);
 
 %% Supp. Fig. 7B
-% Box Plot - Actual Fraction Regenerated
 
-% load "fgf20a_exp1_2_allWTdata_Trim.mat" and "fgf20a_exp2_allLOFdata.mat"
-% from "SuppFig7" folder
+%load "dataLOF2.mat" and "dataWT2.mat" from "SuppFig7" folder
 
-% Subset Data into WTlat,med and LOF lat,med - Ashley use
-
-%subsetLOF data
-
-LOFlat = [];
-LOFmed = [];
-for n = 1:size(exp2DataLOFNew)
-    if exp2DataLOFNew(n,3) < 4
-        LOFlat = vertcat(LOFlat,exp2DataLOFNew(n,:));
-    elseif exp2DataLOFNew(n,3) > 4
-        LOFmed = vertcat(LOFmed,exp2DataLOFNew(n,:));
-    end
-end
-
-%subsetWT data
-
-WTlat = [];
-WTmed = [];
-for n = 1:size(allWTnew)
-    if allWTnew(n,3) < 4 || allWTnew(n,3) > 10
-        WTlat = vertcat(WTlat,allWTnew(n,:));
-    elseif allWTnew(n,3) > 4
-        WTmed = vertcat(WTmed,allWTnew(n,:));
-    end
-end
-
-close all;
-
-Lfin_Lamp_WTlat = (WTlat(:,7))./(WTlat(:,6));
-Lfin_Lamp_WTmed = (WTmed(:,7))./(WTmed(:,6));
-Lfin_Lamp_LOFlat = (LOFlat(:,7))./(LOFlat(:,6));
-Lfin_Lamp_LOFmed = (LOFmed(:,7))./(LOFmed(:,6));
-
-WTlatLabel = zeros(size(Lfin_Lamp_WTlat));
-WTmedLabel = zeros(size(Lfin_Lamp_WTmed))+1;
-LOFlatLabel = zeros(size(Lfin_Lamp_LOFlat))+2;
-LOFmedLabel = zeros(size(Lfin_Lamp_LOFmed))+3;
-
-%box chart script
-xgroupData2 = vertcat(WTlatLabel,WTmedLabel,LOFlatLabel,LOFmedLabel);
-yData2 = vertcat(Lfin_Lamp_WTlat,Lfin_Lamp_WTmed,Lfin_Lamp_LOFlat,Lfin_Lamp_LOFmed);
-
+close all
 figure;
-b = boxchart(xgroupData2,yData2);
-b.BoxFaceColor = [0 0 0];
+
+wtPlot = dataWT(:,7)./dataWT(:,5);
+lofPlot = dataLOF(:,7)./dataLOF(:,5);
+
+x_wt = linspace(0.75,1.25,size(wtPlot,1));
+x_lof = linspace(1.75,2.25,size(lofPlot,1));
+
+stdWT = std(wtPlot);
+varWT = stdWT^2;
+stdLOF = std(lofPlot);
+varLOF = stdLOF^2;
+
+x1 = 1;
+x_wt_box = repelem(x1,size(wtPlot,1));
+
+x2 = 2;
+x_lof_box = repelem(x2,size(lofPlot,1));
+
+
+a = boxchart(x_wt_box,wtPlot); hold on;
+plot(x_wt,wtPlot,'.','MarkerSize',20,'Color','k');
+a.BoxFaceColor = 'k';
+a.BoxFaceAlpha = 0;
+a.MarkerStyle = 'none';
+
+b = boxchart(x_lof_box,lofPlot); hold on;
+plot(x_lof,lofPlot,'.','MarkerSize',20,'Color','r');
+b.BoxFaceColor = 'r';
 b.BoxFaceAlpha = 0;
-%b.MarkerColor = 'k';
-b.MarkerColor = [1 1 1];
-hold on;
+b.MarkerStyle = 'none';
 
-%cHere = [0 0.4470 0.7410];
-scatter0 = [-.5 -.4 -.3 -.2 -.1 0 .1 .2 .3 .4 .5];
-scatter1 = [-.6 -.5 -.4 -.3 -.2 -.1 0 .1 .2 .3 .4 .5 .6 .7];
-scatter0 = scatter0./4;
-scatter1 = scatter1./4;
+[h,p,ci,stats] = ttest2(wtPlot,lofPlot)
 
-scatter0 = linspace(-0.25,0.25,size(WTlatLabel,1));
-scatter1 = linspace(0.75,1.25,size(WTmedLabel,1));
-scatter2 = linspace(1.75,2.25,size(LOFlatLabel,1));
-scatter3 = linspace(2.75,3.25,size(LOFmedLabel,1));
+txt1 = strcat('s^2 = ',num2str(round(varWT,1,"significant")));
+text(0.85,1.25,txt1,'fontsize',16)
 
-plot(scatter0,Lfin_Lamp_WTlat,'.','color',[0 0 0],'Markersize',20); hold on;
-plot(scatter1,Lfin_Lamp_WTmed,'.','color',[0 0 0],'Markersize',20); hold on;
-plot(scatter2,Lfin_Lamp_LOFlat,'.','color',[0.6350 0.0780 0.1840],'Markersize',20); hold on;
-plot(scatter3,Lfin_Lamp_LOFmed,'.','color',[0.6350 0.0780 0.1840],'Markersize',20); hold on;
-box on;
+txt2 = strcat('s^2 = ',num2str(round(varLOF,1,"significant")));
+text(1.90,1.75,txt2,'fontsize',16)
 
+ylim([0,2]);
 
+xticks([1 2])
+xticklabels({'Wildtype','\it{Longfin}'})
 
+%yticks([0 1.0 2.0 3.0 4.0])
 
+ylabel({'Fraction Regen.'})
 
-%Linf stats work
-[p2_WT_lat_med,h2_WT_lat_med,stats2_WT_lat_med] = ranksum(Lfin_Lamp_WTlat,Lfin_Lamp_WTmed); %p = 0.1255
-[p2_LOF_lat_med,h2_LOF_lat_med,stats2_LOF_lat_med] = ranksum(Lfin_Lamp_LOFlat,Lfin_Lamp_LOFmed); %p = 0.0095
-[p2_WTlat_LOFlat,h2_WTlat_LOFlat,stats2_WTlat_LOFlat] = ranksum(Lfin_Lamp_WTlat,Lfin_Lamp_LOFlat); %p = 0.0022
-[p2_WTmed_LOFmed,h2_WTmed_LOFmed,stats2_WTmed_LOFmed] = ranksum(Lfin_Lamp_WTmed,Lfin_Lamp_LOFmed); %p = 0.3277
-
-plot([0,1],[2.15,2.15],'-','color','k','linewidth',1);
-%txt1 = ['{\it p=}' num2str(p2_WT_lat_med,'%.4f')];
-txt1 = ['{\it p=}' num2str(round(p2_WT_lat_med,5))];
-text(0.2,2.25,txt1,'fontsize',16,'color',[0 0 0])
-
-plot([2,3],[2.15,2.15],'-','color','k','linewidth',1);
-%txt2 = ['{\it p=}' num2str(p2_LOF_lat_med,'%.4f')];
-txt2 = ['{\it p=}' num2str(round(p2_LOF_lat_med,3))];
-text(2.2,2.25,txt2,'fontsize',16,'color',[0 0 0])
-
-plot([0,2],[2.45,2.45],'-','color','k','linewidth',1);
-%txt3 = ['{\it p=}' num2str(p2_WTlat_LOFlat,'%.4f')];
-txt3 = ['{\it p=}' num2str(round(p2_WTlat_LOFlat,3))];
-text(0.5,2.55,txt3,'fontsize',16,'color','k')
-
-plot([1,3],[2.75,2.75],'-','color','k','linewidth',1);
-%txt3 = ['{\it p=}' num2str(p2_WTmed_LOFmed,'%.4f')];
-txt3 = ['{\it p=}' num2str(round(p2_WTmed_LOFmed,4))];
-text(1.5,2.85,txt3,'fontsize',16,'color','k')
-
-
-
-ylabel({'Length_{final}/Length_{amp}'})
-%xlim([-1,2]);
-ylim([0,3]);
-set(gca,'FontSize',18);
-
-ax = gca;
-ax.XTick = [0, 1, 2, 3];
-ax.XTickLabels = {'WT Lat.','WT Med.','LOF Lat.','LOF Med.'};
-xtickangle(60)
+set(gca,'fontsize',16)
 
 %% Supp. Fig. 7C
 
-% load "fgf20a_exp1_2_allWTdata_Trim.mat" and "fgf20a_exp2_allLOFdata.mat"
-% from "SuppFig7" folder
-
-% Subset Data into WTlat,med and LOF lat,med - Ashley use
-
-%subsetLOF data
-
-LOFlat = [];
-LOFmed = [];
-for n = 1:size(exp2DataLOFNew)
-    if exp2DataLOFNew(n,3) < 4
-        LOFlat = vertcat(LOFlat,exp2DataLOFNew(n,:));
-    elseif exp2DataLOFNew(n,3) > 4
-        LOFmed = vertcat(LOFmed,exp2DataLOFNew(n,:));
-    end
-end
-
-%subsetWT data
-
-WTlat = [];
-WTmed = [];
-for n = 1:size(allWTnew)
-    if allWTnew(n,3) < 4 || allWTnew(n,3) > 10
-        WTlat = vertcat(WTlat,allWTnew(n,:));
-    elseif allWTnew(n,3) > 4
-        WTmed = vertcat(WTmed,allWTnew(n,:));
-    end
-end
-
-% Box plot Linf/20a data
-close all;
-Linf_NumEx_WTlat = (WTlat(:,7))./WTlat(:,5);
-Linf_NumEx_WTmed = (WTmed(:,7))./WTmed(:,5);
-Linf_NumEx_LOFlat = (LOFlat(:,7))./LOFlat(:,5);
-Linf_NumEx_LOFmed = (LOFmed(:,7))./LOFmed(:,5);
-
-WTlatLabel = zeros(size(Linf_NumEx_WTlat));
-WTmedLabel = zeros(size(Linf_NumEx_WTmed))+1;
-LOFlatLabel = zeros(size(Linf_NumEx_LOFlat))+2;
-LOFmedLabel = zeros(size(Linf_NumEx_LOFmed))+3;
-
-%box chart script
-xgroupData = vertcat(WTlatLabel,WTmedLabel,LOFlatLabel,LOFmedLabel);
-yData = vertcat(Linf_NumEx_WTlat,Linf_NumEx_WTmed,Linf_NumEx_LOFlat,Linf_NumEx_LOFmed);
-
+%load "dataLOF2.mat" and "dataWT2.mat" from "SuppFig7" folder
+close all
 figure;
-b = boxchart(xgroupData,yData);
-b.BoxFaceColor = [0 0 0];
+
+wtPlot = dataWT(:,7)./dataWT(:,4);
+lofPlot = dataLOF(:,7)./dataLOF(:,4);
+
+x_wt = linspace(0.75,1.25,size(wtPlot,1));
+x_lof = linspace(1.75,2.25,size(lofPlot,1));
+
+x1 = 1;
+x_wt_box = repelem(x1,size(wtPlot,1));
+
+x2 = 2;
+x_lof_box = repelem(x2,size(lofPlot,1));
+
+
+a = boxchart(x_wt_box,wtPlot); hold on;
+plot(x_wt,wtPlot,'.','MarkerSize',20,'Color','k');
+a.BoxFaceColor = 'k';
+a.BoxFaceAlpha = 0;
+a.MarkerStyle = 'none';
+
+b = boxchart(x_lof_box,lofPlot); hold on;
+plot(x_lof,lofPlot,'.','MarkerSize',20,'Color','r');
+b.BoxFaceColor = 'r';
 b.BoxFaceAlpha = 0;
-%b.MarkerColor = 'k';
-b.MarkerColor = [1 1 1];
-hold on;
+b.MarkerStyle = 'none';
 
-%cHere = [0 0.4470 0.7410];
-scatter0 = [-.5 -.4 -.3 -.2 -.1 0 .1 .2 .3 .4 .5];
-scatter1 = [-.6 -.5 -.4 -.3 -.2 -.1 0 .1 .2 .3 .4 .5 .6 .7];
-scatter0 = scatter0./4;
-scatter1 = scatter1./4;
+[h,p,ci,stats] = ttest2(wtPlot,lofPlot);
 
-scatter0 = linspace(-0.25,0.25,size(WTlatLabel,1));
-scatter1 = linspace(0.75,1.25,size(WTmedLabel,1));
-scatter2 = linspace(1.75,2.25,size(LOFlatLabel,1));
-scatter3 = linspace(2.75,3.25,size(LOFmedLabel,1));
+txt1 = strcat('p = ',num2str(round(p,1,"significant")));
+text(1.35,3.5,txt1,'fontsize',16)
+plot([1,2],[3.2,3.2],'-','color','k','linewidth',1);
 
-plot(scatter0,Linf_NumEx_WTlat,'.','color',[0 0 0],'Markersize',20); hold on;
-plot(scatter1,Linf_NumEx_WTmed,'.','color',[0 0 0],'Markersize',20); hold on;
-plot(scatter2,Linf_NumEx_LOFlat,'.','color',[0.6350 0.0780 0.1840],'Markersize',20); hold on;
-plot(scatter3,Linf_NumEx_LOFmed,'.','color',[0.6350 0.0780 0.1840],'Markersize',20); hold on;
-box on;
-
-%Linf stats work
-[p_WT_lat_med,h_WT_lat_med,stats_WT_lat_med] = ranksum(Linf_NumEx_WTlat,Linf_NumEx_WTmed); %p = 0.0695
-[p_LOF_lat_med,h_LOF_lat_med,stats_LOF_lat_med] = ranksum(Linf_NumEx_LOFlat,Linf_NumEx_LOFmed); %p = 0.9143
-[p_WTlat_LOFlat,h_WTlat_LOFlat,stats_WTlat_LOFlat] = ranksum(Linf_NumEx_WTlat,Linf_NumEx_LOFlat); %p = 0.0118
-[p_WTmed_LOFmed,h_WTmed_LOFmed,stats_WTmed_LOFmed] = ranksum(Linf_NumEx_WTmed,Linf_NumEx_LOFmed); %p = 0.0176
-
-plot([0,1],[3.15,3.15],'-','color','k','linewidth',1);
-%txt1 = ['{\it p=}' num2str(p_WT_lat_med,'%.4f')];
-txt1 = ['{\it p=}' num2str(round(p_WT_lat_med,2))];
-text(0.2,3.25,txt1,'fontsize',16,'color',[0 0 0])
-
-plot([2,3],[3.15,3.15],'-','color','k','linewidth',1);
-%txt2 = ['{\it p=}' num2str(p_LOF_lat_med,'%.4f')];
-txt2 = ['{\it p=}' num2str(round(p_LOF_lat_med,1))];
-text(2.2,3.25,txt2,'fontsize',16,'color',[0 0 0])
-
-plot([0,2],[3.45,3.45],'-','color','k','linewidth',1);
-%txt3 = ['{\it p=}' num2str(p_WTlat_LOFlat,'%.4f')];
-txt3 = ['{\it p=}' num2str(round(p_WTlat_LOFlat,2))];
-text(0.5,3.55,txt3,'fontsize',16,'color','k')
-
-plot([1,3],[3.75,3.75],'-','color','k','linewidth',1);
-%txt3 = ['{\it p=}' num2str(p_WTmed_LOFmed,'%.4f')];
-txt3 = ['{\it p=}' num2str(round(p_WTmed_LOFmed,2))];
-text(1.5,3.85,txt3,'fontsize',16,'color','k')
-
-
-ylabel({'Length_{reg} (\mum, Predicted) /';'# fgf20a Expressors'})
-%xlim([-1,2]);
-%ylim([-60,120]);
-set(gca,'FontSize',18);
-
-ax = gca;
-ax.XTick = [0, 1, 2, 3];
-ax.XTickLabels = {'WT Lat.','WT Med.','LOF Lat.','LOF Med.'};
-xtickangle(60)
 ylim([0,4]);
+
+xticks([1 2])
+xticklabels({'Wildtype','\it{Longfin}'})
+
+yticks([0 1.0 2.0 3.0 4.0])
+
+ylabel({'Length Regen. /','Fgf20a Expressor (\mum)'})
+
+set(gca,'fontsize',16)
+
+saveas(gca,'/Users/ashleyrich/Documents/DiTaliaLab/Experiments_inProg/16Jan26_fgf20a_krt19_merge_redo/21feb26_plots/lreg_GFPplus_LOF_and_WT_stats.jpg')
+
+
+%"lreg_GFPplus_LOF_and_WT.jpg"
 
 %% Supp. Fig. 7D
 
