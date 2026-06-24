@@ -285,6 +285,10 @@ set(gca,'fontsize',16)
 
 %% Supp. Fig. 7E
 
+%load "timeCollect_WTnoAvg.mat", "timeCollect_LOFnoAvg.mat",
+%"meanAmpCollect_WTnoAvg.mat", and "meanAmpCollect_LOFnoAvg.mat" from
+%"SuppFig7" folder
+
 % Compare decay rate in WT and LOF fish
 close all;
 f = figure;
