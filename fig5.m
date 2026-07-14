@@ -517,8 +517,9 @@ config_plot(f,c);
 
 xlim([0,.8])
 
-xlabel('x/Lamp')
-ylabel('J')
+%xlabel('Position/Length_{Amp}')
+xlabel('Position/Length_{Amp}', 'Interpreter', 'tex')
+ylabel('Source Production (A.U./hr)')
 
 
 set(gca, 'XDir','reverse')
