@@ -292,3 +292,144 @@ set(gca,'fontsize',16)
 
 %yline(200000,'--')
 %xline(6.5,'--')
+
+%% Supp. Fig. 6D
+
+% build lagrangian matrix
+% set initial conditions
+
+time_dependent = 0;
+
+t0 = 72;
+phi0 = 0.115;
+% t0 = 96;
+% phi0 = 0.24;
+% t0 = 24;
+% phi0 = 0.025;
+
+xsize =100;
+
+
+
+% initialize
+lagr_mat = [];
+matHere = [];
+for i = 0:xsize
+    xi0 = i.*phi0./xsize;
+    
+    [t,y]=ode45(@(t,y)growthmodel_lagrangian(t,y,time_dependent),[t0:12:24*28],[phi0,xi0]); % y: 1st column is phi, 2nd is xi
+
+
+    A0 = 0.35998; % A(phi)
+
+    % f(u) 
+    if time_dependent %from linear model Erk ~ 1 + phi_ + u:phi_ + phi_:dpa + u:phi_:dpa, averaged data
+    %     af = (0.16677+t./24.*0.034583)./A0; % f(u)
+    %     bf = (0.30788+t./24.*(-0.043484))./A0; % f(u)
+        af = (0.17355+t./24.*0.032759)./A0; % f(u)
+        bf = (0.32718+t./24.*(-0.023222))./A0; % f(u)
+    else
+        % af = 0.68059; % f(u)
+        % bf = 0.66059; % f(u)
+        af = 1.2; % f(u)
+        bf = 0.4; % f(u)
+    end
+
+
+    ERKi = A0.*(1-y(:,1)).*(af.*(y(:,2)./y(:,1))+bf);
+    
+    
+    % dydt = cell2mat(arrayfun(@(x,y)growthmodel_lagrangian(0,[x;y],time_dependent)',y(:,1),y(:,2),uni=0));
+    dydt = cell2mat(arrayfun(@(tt,x,y)growthmodel_lagrangian(tt,[x;y],time_dependent)',t,y(:,1),y(:,2),uni=0));
+
+    vi = dydt(:,2);
+    
+    
+    % append
+    matHere.t = t;
+    matHere.xi = y(:,2);
+    matHere.ERKi = ERKi;
+    matHere.dERKidt =gradient(ERKi,t);
+    matHere.ERKnormi = ERKi./ERKi(1);
+    matHere.logERKi = log(ERKi);
+    matHere.dlogERKidt = gradient(log(ERKi),t);
+%     matHere.dlogERKidt2 = matHere.dERKidt./ERKi;
+    matHere.vi = vi;
+    
+    matHere.i = i;
+    matHere.ui0 = i/xsize;
+    
+    lagr_mat = [lagr_mat,matHere];
+
+end
+[lagr_mat.ui] = expand_cell(arrayfun(@(s)s.xi./lagr_mat(end).xi,lagr_mat,uni=0));
+
+% compute dilusion via -rho*dv/dx
+t_array = lagr_mat(1).t;
+i_array = [lagr_mat.i];
+x_t_by_i = cat(2,lagr_mat.xi);
+v_t_by_i = cat(2,lagr_mat.vi);
+div_t_by_i = nan(size(x_t_by_i));
+for ti = 1:size(div_t_by_i,1)
+    div_t_by_i(ti,:) = gradient(v_t_by_i(ti,:),x_t_by_i(ti,:));
+end
+[lagr_mat.div_i] = expand_cell(num2cell(div_t_by_i,1)); % dv/dx
+[lagr_mat.dil_i] = expand_cell(arrayfun(@(s)-s.div_i.*s.ERKi,lagr_mat,uni=0)); % -rho*dv/dx
+
+
+
+% plot predicted J(source) from tau(ligand decay time)
+% ***builds: lagr_mat_bytime
+
+tau = 24*4; % hours
+
+% predict J 
+[lagr_mat.J_i] = expand_cell(arrayfun(@(s)s.dERKidt+s.div_i.*s.ERKi+s.ERKi.*1/tau,lagr_mat,uni=0)); % drho/dt + rho*dv/dx +1/tau.*rho
+
+% make matrix by time
+
+lagr_mat_bytime = struct('t',num2cell(lagr_mat(1).t));
+fieldnames_ = fieldnames(lagr_mat);
+for f_i = 2:numel(fieldnames_) % skip t
+    fieldHere = fieldnames_{f_i};
+    if numel(lagr_mat(1).(fieldHere))==1
+        [lagr_mat_bytime.(fieldHere)] = expand_cell(repmat({[lagr_mat.(fieldHere)]},size(lagr_mat_bytime)));
+    else
+        [lagr_mat_bytime.(fieldHere)] = expand_cell(num2cell(cat(2,lagr_mat.(fieldHere)),2));
+    end
+end
+ 
+[lagr_mat_bytime.xi_tip] = expand_cell(arrayfun(@(s)s.xi(end)-s.xi,lagr_mat_bytime,uni=0));
+
+% Generate Supplemental Figure 6D
+% Predict Lfinal as a function of integral of J
+[lagr_mat_bytime.int_J] = expand_cell(arrayfun(@(s)trapz(fliplr(s.xi_tip),fliplr(s.J_i)),lagr_mat_bytime,uni=0));
+[lagr_mat_bytime.int_J_02] = expand_cell(arrayfun(@(s)trapz(fliplr(s.xi_tip(s.xi_tip<=0.2)),fliplr(s.J_i(s.xi_tip<=0.2))),lagr_mat_bytime,uni=0));
+
+
+% plot
+f = figure;
+
+xname = 'int_J';
+% xname = 'int_J_02';
+
+i=0;
+xdata = [];
+ydata = [];
+for Lamp = 1000:1000:5000
+    i = i+1;
+    xdata(i) = [lagr_mat_bytime(1).(xname)].*Lamp;
+    ydata(i) = lagr_mat_bytime(end).xi(end).*Lamp;
+end
+
+plot(xdata,ydata,'-o',LineWidth=2)
+
+config_plot(f);
+
+xlim([0,7])
+ylim([0,5000])
+
+ylabel('L(28dpa)')
+ylabel('Length_{Reg} (28 dpa)')
+%xlabel('Integral of J')
+xlabel('Integral of Production Souce')
