@@ -849,7 +849,7 @@ end
 
 %% Supp. Fig. 3D - right
 
-%see Main Fig 4C
+%see Main Fig 3D
 
 %%  Supp. Fig. 3E
 % f(u) on timeave matrix, aggregate single nuclei first - subtract later - color by Lamp
